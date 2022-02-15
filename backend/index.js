@@ -20,12 +20,22 @@ const connectDB = async () => {
 }
 
 const syncModels = async () => {
-    // Associations
-    Team.hasMany(User)
-    User.belongsTo(Team)
+    await User.sync({force: true});
+    await Team.sync({force: true});
 
-    await Team.sync();
-    await User.sync();
+    // Associations
+    User.hasOne(Team, {
+        as: 'TeamLeader',
+        foreignKey: 'TeamLeader'
+    });
+    User.hasOne(Team, {
+        as: 'ProductManager',
+        foreignKey: 'ProductManager'
+    });
+    Team.hasMany(User);
+
+    await User.sync({force: true});
+    await Team.sync({force: true});
 }
 
 const createAdminUser = async () => {
