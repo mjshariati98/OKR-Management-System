@@ -10,7 +10,7 @@ export default router;
 
 router.post('/sign_up', async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { name, username, email, password } = req.body;
 
         // Validate user's input
         if (!(username && email && password)) {
@@ -27,7 +27,7 @@ router.post('/sign_up', async (req, res) => {
         const token = createToken(username, null, process.env.EXPIRE_DURATION)
 
         // Create new user
-        await createNewUser(username, email, password)
+        await createNewUser(name, username, email, password)
 
         // Response
         res.cookie('access_token', token, {

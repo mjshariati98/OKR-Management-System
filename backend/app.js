@@ -11,7 +11,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 // middlewares
-app.use(throttle);
+app.use('/users/sign_up', throttle);
+app.use('/users/sign_in', throttle);
 
 // endpoints
 app.use('/users', user);
