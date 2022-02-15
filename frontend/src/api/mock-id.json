@@ -1,0 +1,294 @@
+{
+  "companies": [
+    {
+      "id": "company-1",
+      "name": "Sahab",
+      "okrs": ["okr-1"],
+      "teams": ["team-2", "team-1"],
+      "projects": ["project-1"]
+    }
+  ],
+  "rounds": [
+    {
+      "id": "round-2",
+      "startDate": "2020-01-01",
+      "endDate": "2020-03-31",
+      "title": "فصل اول ۲۰۲۰"
+    }
+  ],
+  "okrs": [
+    {
+      "id": "okr-1",
+      "round": "round-2",
+      "objectives": ["objective-1", "objective-2", "objective-3"]
+    },
+    {
+      "id": "okr-4",
+      "round": "round-2",
+      "objectives": ["objective-9", "objective-10"]
+    },
+    {
+      "id": "okr-2",
+      "objectives": ["objective-7", "objective-8"],
+      "round": "round-2"
+    },
+    {
+      "id": "okr-3",
+      "objectives": ["objective-4", "objective-5", "objective-6"],
+      "round": "round-2"
+    }
+  ],
+  "users": [
+    {
+      "id": "user-1",
+      "fullname": "احمد نقوی",
+      "username": "ahmad.naghavi",
+      "okrs": ["okr-4"]
+    },
+    {
+      "id": "user-2",
+      "fullname": "محمد علیدادی",
+      "username": "m.alidadi"
+    },
+    {
+      "id": "user-3",
+      "fullname": "علی نادری",
+      "username": "a.naderi"
+    },
+    {
+      "id": "user-4",
+      "fullname": "سعید آراسته",
+      "username": "s.araste"
+    }
+  ],
+  "teams": [
+    {
+      "id": "team-2",
+      "name": "سیاه",
+      "members": ["user-3", "user-4"],
+      "okrs": []
+    },
+    {
+      "id": "team-1",
+      "name": "سپید",
+      "members": ["user-1", "user-2"],
+      "okrs": ["okr-2"]
+    }
+  ],
+  "objectives": [
+    {
+      "id": "objective-10",
+      "title": "راه اندازی پرومتوس",
+      "keyResults": ["keyresult-28", "keyresult-29"],
+      "progressPercent": 30
+    },
+    {
+      "id": "objective-7",
+      "title": "مهاجرت به پرومتوس",
+      "progressPercent": 20,
+      "keyResults": ["keyresult-21", "keyresult-22", "keyresult-23"]
+    },
+    {
+      "id": "objective-8",
+      "title": "بارنویسی بخش استخراج داده",
+      "progressPercent": 25,
+      "keyResults": ["keyresult-24", "keyresult-25"]
+    },
+    {
+      "id": "objective-9",
+      "title": "آموزش دوره نرم‌افزار نئور",
+      "keyResults": ["keyresult-26", "keyresult-27"],
+      "progressPercent": 0
+    },
+    {
+      "id": "objective-4",
+      "title": "آموزش دوره اول نئور",
+      "progressPercent": 10,
+      "keyResults": ["keyresult-11", "keyresult-12", "keyresult-13"]
+    },
+    {
+      "id": "objective-5",
+      "title": "توسعه زیر ساخت گزارشات",
+      "progressPercent": 46,
+      "keyResults": ["keyresult-14", "keyresult-15", "keyresult-16"]
+    },
+    {
+      "id": "objective-6",
+      "title": "توسعه ابزار ‌aqms",
+      "progressPercent": 23,
+      "keyResults": ["keyresult-17", "keyresult-18", "keyresult-19", "keyresult-20"]
+    },
+    {
+      "id": "objective-1",
+      "title": "اهداف عملیاتی در حوزه محصولات سفارشی",
+      "progressPercent": 67,
+      "keyResults": ["keyresult-3", "keyresult-4", "keyresult-5"]
+    },
+    {
+      "id": "objective-2",
+      "title": "بهبود فضای تجاری شرکت",
+      "progressPercent": 0,
+      "keyResults": ["keyresult-6", "keyresult-7", "keyresult-8"]
+    },
+    {
+      "id": "objective-3",
+      "title": "ایجاد یا بهبود زیرساخت های سازمان",
+      "progressPercent": 90,
+      "keyResults": ["keyresult-9", "keyresult-10"]
+    }
+  ],
+  "keyresults": [
+    {
+      "id": "keyresult-29",
+      "title": "نوشتن انسیبل  پرومتوس",
+      "progressPercent": 100
+    },
+    {
+      "id": "keyresult-28",
+      "title": "راه اندازی پرمتوس",
+      "progressPercent": 20
+    },
+    {
+      "id": "keyresult-21",
+      "title": "راه اندازی پرومتوس",
+      "progressPercent": ["objective-10"]
+    },
+    {
+      "id": "keyresult-22",
+      "title": "بکارگیری ابزار پرومتوس ",
+      "progressPercent": 23
+    },
+    {
+      "id": "keyresult-23",
+      "title": "حذف زبیکس",
+      "progressPercent": 45
+    },
+    {
+      "id": "keyresult-24",
+      "title": "بازنویسی خود ماژول",
+      "progressPercent": 0
+    },
+    {
+      "id": "keyresult-25",
+      "title": "راه اندازی ci/cd برای این بخش",
+      "progressPercent": 0
+    },
+    {
+      "id": "keyresult-26",
+      "title": "آماده کردن محتوای",
+      "progressPercent": 0
+    },
+    {
+      "id": "keyresult-27",
+      "title": "برگزاری کلاس",
+      "progressPercent": 80
+    },
+    {
+      "id": "keyresult-11",
+      "title": "آموزش دوره نرم‌افزار نئور",
+      "progressPercent": ["objective-9"]
+    },
+    {
+      "id": "keyresult-12",
+      "title": "آموزش حین کار نئور",
+      "progressPercent": 20
+    },
+    {
+      "id": "keyresult-13",
+      "title": "تکمیل اسناد معماری نئور",
+      "progressPercent": 60
+    },
+    {
+      "id": "keyresult-14",
+      "title": "طراحی معماری و انتخااب ابزار گزارشات",
+      "progressPercent": 40
+    },
+    {
+      "id": "keyresult-15",
+      "title": "راه اندازی  زیرساخت",
+      "progressPercent": 0
+    },
+    {
+      "id": "keyresult-16",
+      "title": "توسعه بخش موتور گزارشات",
+      "progressPercent": 0
+    },
+    {
+      "id": "keyresult-17",
+      "title": "طراحی معماری و انتخااب ابزار برای ‌aqms",
+      "progressPercent": 24
+    },
+    {
+      "id": "keyresult-18",
+      "title": "طراحی رابط کاربری",
+      "progressPercent": 100
+    },
+    {
+      "id": "keyresult-19",
+      "title": "راه اندازی بستر توسعه ",
+      "progressPercent": 90
+    },
+    {
+      "id": "keyresult-20",
+      "title": "توسعه بخش ذخیره‌سازی داده",
+      "progressPercent": 70
+    },
+    {
+      "id": "keyresult-3",
+      "title": "اجرای قرارداد نگهداری و پشتیبانی نئور",
+      "progressPercent": ["objective-7", "objective-8"]
+    },
+    {
+      "id": "keyresult-4",
+      "title": "تحویل قرارداد صبا ۱۴۰۰",
+      "progressPercent": 60
+    },
+    {
+      "id": "keyresult-5",
+      "title": "تعریف و انعقاد قرارداد صبا ۱۴۰۱",
+      "progressPercent": 0
+    },
+    {
+      "id": "keyresult-6",
+      "title": "ایجاد برند مناسب برای سحاب در فضای تجاری مطابق مصوبات کمیته ارتباطات",
+      "progressPercent": 20
+    },
+    {
+      "id": "keyresult-7",
+      "title": "ارزیابی کارایی تولید نرم افزار در حوزه کلان داده",
+      "progressPercent": 25
+    },
+    {
+      "id": "keyresult-8",
+      "title": "تولید سرنخ فروش و اجرای برنامه بازاریابی",
+      "progressPercent": 30
+    },
+    {
+      "id": "keyresult-9",
+      "title": "تولید زیرساخت تحلیل و ارائه گزارشات استراتژیکاولیه متناسب با سند پروپوزال بهبود داده محوری",
+      "progressPercent": 40
+    },
+    {
+      "id": "keyresult-10",
+      "title": "تولید گزارشات عمومی بخش های مشخص شده با همکاری مسئولان مربوطه به جهت ایجاد شفافیت در سازمان",
+      "progressPercent": 30
+    },
+    {
+      "id": "keyresult-1",
+      "title": "اخذ  FAC  قرار داد نئور",
+      "progressPercent": ["objective-4"]
+    },
+    {
+      "id": "keyresult-2",
+      "title": "توسعه نئور",
+      "progressPercent": ["objective-5", "objective-6"]
+    }
+  ],
+  "projects": [
+    {
+      "id": "project-1",
+      "name": "نئور",
+      "okrs": ["okr-3"]
+    }
+  ]
+}
