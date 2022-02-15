@@ -1,0 +1,26 @@
+version: '2'
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:14.1-alpine
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    volumes:
+    - ./database/db_data:/var/lib/postgresql/data
+    networks:
+    - common-network
+
+  backend-1:
+    container_name: backend
+    image: node:16.12-slim
+    build: ./backend
+    command: npm run start
+    ports: 
+    - "8000:8000"
+    networks:
+    - common-network
+
+networks:
+  common-network:
