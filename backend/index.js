@@ -42,11 +42,13 @@ const createAdminUser = async () => {
     const adminUser = await getUser(process.env.SERVER_ADMIN_USERNAME);
     if (!adminUser) {
         await createNewUser(
-            process.env.SERVER_ADMIN_NAME,
             process.env.SERVER_ADMIN_USERNAME,
+            process.env.SERVER_ADMIN_FRISTNAME,
+            process.env.SERVER_ADMIN_LASTNAME,
             process.env.SERVER_ADMIN_EMAIL,
+            process.env.SERVER_ADMIN_PHONE,
             process.env.SERVER_ADMIN_PASSWORD,
-            'admin');
+            'Admin');
         console.log('Admin user created.');
     }
 }

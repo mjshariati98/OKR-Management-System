@@ -2,39 +2,44 @@ import dotenv from 'dotenv';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { getUser, createNewUser } from '../model/user.js';
+import { getUser, createNewUser, getAllUsers } from '../model/user.js';
 import auth from '../middleware/auth.js';
 
 dotenv.config();
 const router = express.Router();
 export default router;
 
-router.post('/sign_up', async (req, res) => {
+router.post('/new', async (req, res) => {
     try {
-        const { name, username, email, password } = req.body;
+        const { username, firstname,lastname, email, phone, role } = req.body;
 
         // Validate user's input
-        if (!(username && email && password)) {
-            res.status(400).send('All inputs are required');
+        if (!(username)) {
+            res.status(400).send('Username is required');
         }
 
         // check if user already exist
         const oldUser = await getUser(username);
         if (oldUser) {
-            return res.status(409).send('User Already Exist.');
+            return res.status(409).send('Username Already Exist.');
         }
 
         // Create token
         const token = createToken(username, null, process.env.EXPIRE_DURATION)
 
         // Create new user
-        await createNewUser(name, username, email, password)
+        const password = random_password(process.env.RAND_PASS_LENGTH)
+        await createNewUser(username, firstname,lastname, email, phone, password, role)
 
         // Response
         res.cookie('access_token', token, {
             httpOnly: true,
             secure: false,
-        }).status(201).json({message: 'Sign up successfully'});
+        }).status(201).json({
+            message: 'Sign up successfully',
+            username: username,
+            password: password
+        });
     } catch (error) {
         res.status(500).send('Failed to Sign up.');
         console.error(error);
@@ -82,6 +87,11 @@ router.post('/sign_out', async (req, res) => {
     }
 });
 
+router.get('/', auth, async (req, res) => {
+    const users = await getAllUsers();
+    res.status(200).json(users);
+});
+
 router.get('/profile', auth, async (req, res) => {
     const username = req.user;
     res.status(200).send({ username });
@@ -94,4 +104,13 @@ const createToken = (username, role, expireDuration) => {
         process.env.TOKEN_KEY,
         { expiresIn: expireDuration}
     );
+}
+
+const random_password = (length) => {
+    var result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
 }

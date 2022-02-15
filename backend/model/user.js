@@ -3,19 +3,28 @@ import bcrypt from 'bcryptjs';
 import { dbClient } from '../config/db.js'
 
 export const User = dbClient.define('user', {
-    name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        primaryKey: false
-    },
     username: {
         type: Sequelize.STRING,
         allowNull: false,
         primaryKey: true
+    },
+    firstname: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        primaryKey: false
+    },
+    lastname: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        primaryKey: false
     },   
     email: { 
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
+    },
+    phone: {
+        type: Sequelize.STRING,
+        allowNull: true
     },
     password: {
         type: Sequelize.STRING,
@@ -24,6 +33,9 @@ export const User = dbClient.define('user', {
     role: {
         type: Sequelize.STRING,
         allowNull: false,
+        validate: {
+            isIn: [['Admin', 'TeamLeader', 'ProductManager', 'Normal']],
+        },
         defaultValue: "normal"
     }
 }, {
@@ -38,16 +50,22 @@ export const getUser = async (username) => {
     });
 }
 
-export const createNewUser = async (name, username, email, password, role) => {
-    // Encrypt user'a password
+export const getAllUsers = async (username) => {
+    return await User.findAll({ attributes: { exclude: ['password'] } });
+}
+
+export const createNewUser = async (username, firstname,lastname, email, phone, password, role) => {
+    // Encrypt user's password
     const encryptedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
     return await User.create({
-        name: name,
         username: username,
+        firstname: firstname,
+        lastname: lastname,
         email: email,
+        phone: phone,
         password: encryptedPassword,
-        role: (role || 'normal')
+        role: (role || 'Normal')
     });
 }
