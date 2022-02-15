@@ -93,12 +93,11 @@ export function getCompany(companyId: ID) {
 }
 
 export function getTarget(params: {
-    companyId: ID;
     childTargetType?: ChildTarget['type'];
     childTargetId?: ID;
 }) {
-    const company = getCompany(params.companyId);
-    if (!company) throw 404;
+    const company = getCompany('company-1');
+    if (!company) new Error('404');
 
     const type = params.childTargetType;
     const isTeam = type === 'team',
@@ -109,7 +108,7 @@ export function getTarget(params: {
         ? company.teams.flatMap((t) => t.members).find((user) => user.id === params.childTargetId)
         : null;
 
-    if ((isTeam && !team) || (isUser && !user)) throw 404;
+    if ((isTeam && !team) || (isUser && !user)) throw new Error('404');
 
     const childTarget = team || user;
 

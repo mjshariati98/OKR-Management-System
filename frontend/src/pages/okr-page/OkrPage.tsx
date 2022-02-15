@@ -17,7 +17,7 @@ const createTargetColumns = (targetType: Target['type']): GridColDef[] => [
 ];
 
 export default function OkrPage() {
-    const params = useParams<{ companyId: ID; childTargetId?: ID }>();
+    const params = useParams<{ childTargetId?: ID }>();
 
     const { company, childTarget, target, team } = getTarget(params);
 

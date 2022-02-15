@@ -11,10 +11,12 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { FormEvent, useState } from 'react';
+import { endPoints } from 'src/api/enpoints';
+import { queryClient } from 'src/global/query-client';
 import 'twin.macro';
 
 interface Props {
-    onDone: VoidFunction;
+    // onDone: VoidFunction;
 }
 
 export type { Props as AuthProps };
@@ -34,7 +36,9 @@ export default function Authentication(props: Props) {
         // data.username = data.email;
         axios
             .post(['/users/sign_in', '/users/sign_up'][tab], data)
-            .then(props.onDone, (e) => setError(e.response.data));
+            .then(() => {
+                queryClient.invalidateQueries(endPoints.profile);
+            }, (e) => setError(e.response.data));
     };
 
     return (
