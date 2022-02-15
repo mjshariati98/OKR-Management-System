@@ -5,6 +5,7 @@ import 'twin.macro';
 import Authentication from './pages/authentication';
 import HomePage from './pages/home-page';
 import OkrPage from './pages/okr-page';
+import Users from './pages/users';
 
 const App = () => {
     return (
@@ -15,6 +16,8 @@ const App = () => {
                 mode="unauthorized"
                 component={Authentication}
             />
+
+            <AdvanceRoute exact path="/users/" component={Users} />
 
             <AdvanceRoute exact path="/company/" component={HomePage} />
             <AdvanceRoute exact path="/company/round/:roundId" component={OkrPage} />

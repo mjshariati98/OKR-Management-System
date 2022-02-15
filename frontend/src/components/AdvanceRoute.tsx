@@ -13,8 +13,8 @@ export default function AdvanceRoute(props: Props) {
     const { mode = 'authorized', ...rest } = props;
     const { data } = useQuery(endPoints.profile);
 
-    if (!data && mode === 'authorized') return <Redirect to="/authentication" />;
-    if (data && mode === 'unauthorized') return <Redirect to="/company/" />;
+    // if (!data && mode === 'authorized') return <Redirect to="/authentication" />;
+    // if (data && mode === 'unauthorized') return <Redirect to="/company/" />;
 
     return (
         <>
