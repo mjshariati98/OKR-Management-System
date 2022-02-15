@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import http from 'http';
 import { dbClient } from './config/db.js';
 import { User, getUser, createNewUser } from './model/user.js';
-import { Note } from './model/note.js';
 import { app } from './app.js';
 
 dotenv.config();
@@ -21,7 +20,6 @@ const connectDB = async () => {
 
 const syncModels = async () => {
     await User.sync();
-    await Note.sync();
 }
 
 const createAdminUser = async () => {
