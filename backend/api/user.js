@@ -3,6 +3,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { getUser, createNewUser } from '../model/user.js';
+import auth from '../middleware/auth.js';
 
 dotenv.config();
 const router = express.Router();
@@ -79,6 +80,11 @@ router.post('/sign_out', async (req, res) => {
         res.status(500).send('Failed to logout.');
         console.log(err);
     }
+});
+
+router.get('/profile', auth, async (req, res) => {
+    const username = req.user;
+    res.status(200).send({ username });
 });
 
 // helper functions 
