@@ -63,7 +63,7 @@ const createTargetColumns = (targetType: Target['type']): GridColDef[] => [
         renderCell: (param) => (
             <Button
                 component={Link}
-                to={`${window.location.pathname.match(/\/company\/[^/]*/)}/${param.row.type}/${
+                to={`${window.location.pathname.match(/\/company/)}/${param.row.type}/${
                     param.row.id
                 }/`}
             >
@@ -76,7 +76,7 @@ const createTargetColumns = (targetType: Target['type']): GridColDef[] => [
 export default function HomePage() {
     const params = useParams<{ childTargetId?: ID }>();
 
-    const { company, childTarget, target, team } = getTarget(params);
+    const { company, childTarget, target } = getTarget(params);
 
     const isCompanyLevel = !childTarget;
     const okrs = target.okrs ?? [];
@@ -90,20 +90,12 @@ export default function HomePage() {
             justifyContent="center"
         >
             <Typography variant="h1">{target.name}</Typography>
-            <Grid item xs={4} mt={3} container width={1000}>
+            <Grid item xs={4} mt={3} container>
                 <DataGrid rows={okrs} columns={okrColumns} />
             </Grid>
-
-            <Grid item xs={4} mt={3} container width={1000}>
+            <Grid item xs={4} mt={3} container>
                 {isCompanyLevel && (
-                    <Grid item xs={12}>
-                        <DataGrid rows={company.teams} columns={createTargetColumns('team')} />
-                    </Grid>
-                )}
-                {team && (
-                    <Grid item xs={12}>
-                        <DataGrid rows={team.members} columns={createTargetColumns('user')} />
-                    </Grid>
+                    <DataGrid rows={company.teams} columns={createTargetColumns('team')} />
                 )}
             </Grid>
         </Grid>
