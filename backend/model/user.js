@@ -50,11 +50,22 @@ export const getUser = async (username) => {
     });
 }
 
-export const getAllUsers = async (username) => {
+export const getAllUsers = async () => {
     return await User.findAll({ attributes: { exclude: ['password'] } });
 }
 
-export const createNewUser = async (username, firstname,lastname, email, phone, password, role) => {
+export const getRole = async (username) => {
+    const user = await User.findOne({
+        where: {
+            username: username
+        },
+        attributes: ['role'],
+        raw: true
+    });
+    return user.role
+}
+
+export const createNewUser = async (username, firstname,lastname, email, phone, password, role=null) => {
     // Encrypt user's password
     const encryptedPassword = await bcrypt.hash(password, 10);
 

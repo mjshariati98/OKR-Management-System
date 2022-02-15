@@ -9,9 +9,23 @@ dotenv.config();
 const router = express.Router();
 export default router;
 
-router.post('/new', async (req, res) => {
+// Get all users
+router.get('/', auth, async (req, res) => {
+    const users = await getAllUsers();
+    res.status(200).json(users);
+});
+
+// Create new user
+router.post('/new', auth, async (req, res) => {
     try {
-        const { username, firstname,lastname, email, phone, role } = req.body;
+        const userRole = req.userRole
+        const { username, firstname,lastname, email, phone } = req.body;
+
+        // Check authority
+        console.log(userRole);
+        if (userRole != 'Admin' && userRole != 'TeamLeader') {
+            return res.status(401).send('You dont have the permission to add a new user. Ask your admin or TeamLeader.');   
+        }
 
         // Validate user's input
         if (!(username)) {
@@ -25,18 +39,15 @@ router.post('/new', async (req, res) => {
         }
 
         // Create token
-        const token = createToken(username, null, process.env.EXPIRE_DURATION)
+        const token = createToken(username, process.env.EXPIRE_DURATION)
 
         // Create new user
         const password = random_password(process.env.RAND_PASS_LENGTH)
-        await createNewUser(username, firstname,lastname, email, phone, password, role)
+        await createNewUser(username, firstname,lastname, email, phone, password)
 
         // Response
-        res.cookie('access_token', token, {
-            httpOnly: true,
-            secure: false,
-        }).status(201).json({
-            message: 'Sign up successfully',
+        res.status(201).json({
+            message: 'User created successfully',
             username: username,
             password: password
         });
@@ -46,7 +57,7 @@ router.post('/new', async (req, res) => {
     }
 });
 
-
+// Log in
 router.post('/sign_in', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -60,7 +71,7 @@ router.post('/sign_in', async (req, res) => {
         const user = await getUser(username);
         if (user && (await bcrypt.compare(password, user.password))) {
             // Create token
-            const token = createToken(username, user.role, process.env.EXPIRE_DURATION)
+            const token = createToken(username, process.env.EXPIRE_DURATION)
 
             // Response
             res.cookie('access_token', token, {
@@ -68,7 +79,7 @@ router.post('/sign_in', async (req, res) => {
                 secure: false,
             }).status(200).json({message: 'Logged in successfully'});
         } else {
-            res.status(400).send('Invalid Credentials');    
+            res.status(400).send('Invalid Credentials');
         }
     } catch (err) {
         res.status(500).send('Failed to log in.');
@@ -76,6 +87,7 @@ router.post('/sign_in', async (req, res) => {
     }
 });
 
+// Log out
 router.post('/sign_out', async (req, res) => {
     try {
         res.clearCookie('access_token')
@@ -87,20 +99,16 @@ router.post('/sign_out', async (req, res) => {
     }
 });
 
-router.get('/', auth, async (req, res) => {
-    const users = await getAllUsers();
-    res.status(200).json(users);
-});
-
+// Get profile of logged-in user
 router.get('/profile', auth, async (req, res) => {
     const username = req.user;
     res.status(200).send({ username });
 });
 
 // helper functions 
-const createToken = (username, role, expireDuration) => {
+const createToken = (username, expireDuration) => {
     return jwt.sign(
-        { username: username, role: role},
+        { username: username },
         process.env.TOKEN_KEY,
         { expiresIn: expireDuration}
     );

@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import user from './api/user.js';
+import team from './api/team.js';
 import throttle from './middleware/throttle.js'
 
 dotenv.config(); 
@@ -16,3 +17,4 @@ app.use('/users/sign_in', throttle);
 
 // endpoints
 app.use('/users', user);
+app.use('/teams', team);
