@@ -132,7 +132,7 @@ router.put('/:team_name', auth, async (req, res) => {
     } catch (error) {
         res.status(500).send('Failed to update the team.');
         console.log(error);
-    }   
+    }
 });
 
 // Delete a team

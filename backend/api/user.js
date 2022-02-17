@@ -11,8 +11,20 @@ export default router;
 
 // Get all users
 router.get('/', auth, async (req, res) => {
-    const users = await getAllUsers();
-    res.status(200).json(users);
+    try {
+        const userRole = req.userRole;
+
+        // Check authority
+        if (userRole != 'Admin') {
+            return res.status(401).send('You dont have the permission to list users.');
+        }
+
+        const users = await getAllUsers();
+        res.status(200).json(users);
+    } catch (err) {
+        res.status(500).send('Failed to list users.');
+        console.error(error);
+    }
 });
 
 // Create new user
@@ -87,6 +99,54 @@ router.delete('/', auth, async (req, res) => {
     } catch (error) {
         res.status(500).send('Failed to delete user');
         console.error(error);
+    }
+});
+
+// Edit user information
+router.put('/:username', auth, async (req, res) => {
+    try {
+        const userRole = req.userRole;
+        const username = req.params.username;
+        const { firstname:newFirstName,lastname:newLastName, email:newEmail, phone:newPhone } = req.body;
+
+        // Check authority
+        if (userRole != 'Admin' && req.user != username) {
+            return res.status(401).send('You dont have the permission to edit this user.');
+        }
+
+        // Get the user
+        const user = await getUser(username);
+        if (!user) {
+            return res.status(409).send('User with this username does not Exist.');
+        }
+
+        // update firstname
+        if (newFirstName && newFirstName != user.firstname) {
+            user.firstname = newFirstName;
+        }
+
+        // update lastname
+        if (newLastName && newLastName != user.lastname) {
+            user.lastname = newLastName;
+        }
+
+        // update email
+        if (newEmail && newEmail != user.email) {
+            user.email = newEmail;
+        }
+
+        // update phone
+        if (newPhone && newPhone != user.phone) {
+            user.phone = newPhone;
+        }
+
+        await user.save();
+
+        // Response
+        res.status(200).send('User updated succussfully!');
+    } catch (error) {
+        res.status(500).send('Failed to update the user.');
+        console.log(error);
     }
 });
 
