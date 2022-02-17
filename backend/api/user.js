@@ -69,10 +69,10 @@ router.post('/new', auth, async (req, res) => {
 });
 
 // Delete user
-router.delete('/', auth, async (req, res) => {
+router.delete('/:username', auth, async (req, res) => {
     try {
-        const userRole = req.userRole
-        const { username } = req.body;
+        const userRole = req.userRole;
+        const username = req.params.username;
 
         // Check authority
         if (userRole != 'Admin') {
