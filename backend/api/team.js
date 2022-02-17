@@ -23,7 +23,7 @@ router.get('/', auth, async (req, res) => {
 router.post('/new', auth, async (req, res) => {
     try {
         const userRole = req.userRole;
-        const { name, teamLeader, productManager } = req.body;
+        const { name, description, teamLeader, productManager } = req.body;
 
         // Check authority
         if (userRole != 'Admin') {
@@ -54,7 +54,7 @@ router.post('/new', auth, async (req, res) => {
         }
         
         // Create the team
-        await createNewTeam(name, teamLeader, productManager)
+        await createNewTeam(name, description, teamLeader, productManager)
 
         tl.role = 'TeamLeader'
         tl.teamName = name
@@ -78,7 +78,7 @@ router.put('/:team_name', auth, async (req, res) => {
     try {
         const userRole = req.userRole;
         const teamName = req.params.team_name;
-        const { teamLeader:newTeamLeader, productManager:newProductManager } = req.body;
+        const { description: newDescription, teamLeader:newTeamLeader, productManager:newProductManager } = req.body;
 
         // Check authority
         if (userRole != 'Admin') {
@@ -89,6 +89,11 @@ router.put('/:team_name', auth, async (req, res) => {
         const team = await getTeam(teamName);
         if (!team) {
             return res.status(409).send('Team with this name does not Exist.');
+        }
+
+        // Update description
+        if (newDescription) {
+            team.description = newDescription;
         }
         
         // update TL
@@ -106,7 +111,6 @@ router.put('/:team_name', auth, async (req, res) => {
             
             await oldTL.save();
             await newTL.save();
-            await team.save();
         }
 
         // Update PM
@@ -124,8 +128,9 @@ router.put('/:team_name', auth, async (req, res) => {
             
             await oldPM.save();
             await newPM.save();
-            await team.save();
         }
+
+        await team.save();
 
         // Response
         res.status(200).send('Team updated succussfully!');

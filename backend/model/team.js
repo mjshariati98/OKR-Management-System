@@ -7,13 +7,18 @@ export const Team = dbClient.define('team', {
         allowNull: false,
         primaryKey: true
     },
+    description: {
+        type: Sequelize.STRING,
+        allowNull: true
+    }
 }, {
     freezeTableName: true
 });
 
-export const createNewTeam = async (name, teamLeader, productManager=null) => {
+export const createNewTeam = async (name, description, teamLeader, productManager=null) => {
     return await Team.create({
         name: name,
+        description: description,
         TeamLeader: teamLeader,
         ProductManager: productManager
     });
