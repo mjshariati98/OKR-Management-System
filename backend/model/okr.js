@@ -9,3 +9,32 @@ export const OKR = dbClient.define('okr', {
 }, {
     freezeTableName: true
 });
+
+export const getOKRByID = async (id) => {
+    return await OKR.findOne({
+        where: {
+            id: id
+        }
+    });
+};
+
+export const getOKR = async (roundId, teamName) => {
+    return await OKR.findOne({
+        where: {
+            roundId: roundId,
+            team: teamName
+        }
+    });
+};
+
+export const getAllOKRs = async () => {
+    return await OKR.findAll();
+};
+
+export const createNewOKR = async (round, team, description) => {
+    return await OKR.create({
+        description: description,
+        roundId: round,
+        team: team
+    });
+};

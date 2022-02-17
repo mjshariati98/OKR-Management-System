@@ -32,7 +32,7 @@ router.post('/new', auth, async (req, res) => {
 
         // Validate user's input
         if (!name || !teamLeader) {
-            res.status(400).send('Team\'s name and TeamLeader fields are required');
+            return res.status(400).send('Team\'s name and TeamLeader fields are required');
         }
 
         // check if team already exist

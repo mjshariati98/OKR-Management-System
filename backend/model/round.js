@@ -14,3 +14,22 @@ export const Round = dbClient.define('round', {
 }, {
     freezeTableName: true
 });
+
+export const createNewRound = async (id, name) => {
+    return await Round.create({
+        id: id,
+        name: name
+    });
+};
+
+export const getRound = async (id) => {
+    return await Round.findOne({
+        where: {
+            id: id
+        }
+    });
+};
+
+export const getAllRounds = async () => {
+    return await Round.findAll();
+};
