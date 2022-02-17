@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { getUser, createNewUser, getAllUsers } from '../model/user.js';
+import { getUser, getUserPassword, createNewUser, getAllUsers } from '../model/user.js';
 import auth from '../middleware/auth.js';
 
 dotenv.config();
@@ -102,7 +102,8 @@ router.post('/sign_in', async (req, res) => {
 
         // Validate if user exist in our database
         const user = await getUser(username);
-        if (user && (await bcrypt.compare(password, user.password))) {
+        const userPassword = await getUserPassword(username);
+        if (user && (await bcrypt.compare(password, userPassword))) {
             // Create token
             const token = createToken(username, process.env.EXPIRE_DURATION)
 
@@ -134,8 +135,13 @@ router.post('/sign_out', async (req, res) => {
 
 // Get profile of logged-in user
 router.get('/profile', auth, async (req, res) => {
-    const username = req.user;
-    res.status(200).send({ username });
+    try {
+        const user = await getUser(req.user);
+        res.status(200).send({ user });
+    } catch (err) {
+        res.status(500).send('Failed to get user profile.');
+        console.log(err);
+    }
 });
 
 // helper functions 
