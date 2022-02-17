@@ -205,6 +205,11 @@ try {
             return res.status(401).send('You dont have the permission to add users to teams. Ask your admin or team leader.');
         }
 
+        // Validate input
+        if (!(username)) {
+            res.status(400).send('Username is required');
+        }
+
         // Check user exist
         const user = await getUser(username);
         if (!user) {

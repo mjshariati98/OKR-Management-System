@@ -22,7 +22,6 @@ router.post('/new', auth, async (req, res) => {
         const { username, firstname,lastname, email, phone } = req.body;
 
         // Check authority
-        console.log(userRole);
         if (userRole != 'Admin' && userRole != 'TeamLeader') {
             return res.status(401).send('You dont have the permission to add a new user. Ask your admin or TeamLeader.');   
         }
@@ -53,6 +52,39 @@ router.post('/new', auth, async (req, res) => {
         });
     } catch (error) {
         res.status(500).send('Failed to Sign up.');
+        console.error(error);
+    }
+});
+
+router.delete('/', auth, async (req, res) => {
+    try {
+        const userRole = req.userRole
+        const { username } = req.body;
+
+        // Check authority
+        if (userRole != 'Admin') {
+            return res.status(401).send('You dont have the permission to delete users. Ask your admin.');
+        }
+
+        // Validate user's input
+        if (!(username)) {
+            res.status(400).send('Username is required');
+        }
+
+        // check if user already exist
+        const user = await getUser(username);
+        if (!user) {
+            return res.status(409).send('User with this username does not exists.');
+        }
+
+        user.destroy();
+
+        // Response
+        res.status(201).json({
+            message: 'User deleted successfully',
+        });
+    } catch (error) {
+        res.status(500).send('Failed to delete user');
         console.error(error);
     }
 });
