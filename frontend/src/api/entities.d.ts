@@ -10,6 +10,6 @@ export interface BaseUser {
 }
 export interface UserFull extends BaseUser {
     role: Role;
-    createdAt: Date;
+    createdAt?: string;
     teamName?: string;
 }

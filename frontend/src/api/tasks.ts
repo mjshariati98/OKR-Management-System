@@ -2,14 +2,18 @@ import axios, { AxiosError } from 'axios';
 import { BaseUser, UserFull } from './entities';
 
 export function createOrUpdateUser(user: BaseUser, type: "add" | "update") {
+    let url = "/users/new";
+    if (type === "update") {
+        url = `/users/${user.username}`
+    }
     return axios({
         method: type === "update" ? 'put' : 'post',
-        url: '/users6/' + type === "add" ? "new" : `${user.username}`,
+        url: url,
         data: user,
     });
 }
 
-export async function getAllUsers() {
+export async function getUsers() {
     const res = await axios.request<UserFull[]>({
         method: "get",
         url: "/users"
