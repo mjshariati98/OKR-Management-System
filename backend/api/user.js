@@ -56,6 +56,7 @@ router.post('/new', auth, async (req, res) => {
     }
 });
 
+// Delete user
 router.delete('/', auth, async (req, res) => {
     try {
         const userRole = req.userRole
