@@ -10,8 +10,13 @@ export default router;
 
 // Get all teams
 router.get('/', auth, async (req, res) => {
-    const teams = await getAllTeams();
-    res.status(200).json(teams);
+    try {
+        const teams = await getAllTeams();
+        res.status(200).json(teams);
+    }catch (err){
+        res.status(500).send('Failed to get teams.');
+        console.log(err);
+    }
 });
 
 // Create new team
@@ -178,5 +183,57 @@ router.delete('/:team_name', auth, async (req, res) => {
     } catch (error) {
         res.status(500).send('Failed to delete the team.');
         console.log(error);
+    }
+});
+
+// Add a user to a team
+router.post('/:team_name', auth, async (req, res) => {
+
+try {
+        const userRole = req.userRole;
+        const teamName = req.params.team_name;
+        const { username } = req.body;
+
+        // Get the team
+        const team = await getTeam(teamName);
+        if (!team) {
+            return res.status(409).send('Team with this name does not Exist.');
+        }
+
+        // Check authority
+        if (userRole != 'Admin' && userRole != 'TeamLeader') {
+            return res.status(401).send('You dont have the permission to add users to teams. Ask your admin or team leader.');
+        }
+
+        // Check user exist
+        const user = await getUser(username);
+        if (!user) {
+            return res.status(404).send('user with this username does not exist');
+        }
+
+        // Team leaders only can add normal users to team
+        if (userRole == 'TeamLeader' && user.role != 'Normal') {
+            return res.status(401).send('You dont have the permission to add non-Noraml users to teams. Ask your admin.');
+        }
+
+        // Team leaders only can add users to their own team
+        if (userRole == 'TeamLeader') {
+            const tl = await getUser(req.user)
+            const tlTeam = tl.teamName
+            if (tlTeam != teamName){
+                return res.status(401).send('You dont have the permission to add users to another teams.');
+            }
+        }
+
+        user.teamName = teamName
+        user.role = 'Normal'
+        user.save()
+
+        res.status(201).json({
+            message: 'User assigned to team successfully.'
+        });
+    }catch (err){
+        res.status(500).send('Failed to assign user to team.');
+        console.log(err);
     }
 });
