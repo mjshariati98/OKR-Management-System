@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import { createNewTeam, getTeam, getAllTeams } from '../model/team.js';
+import { createNewTeam, getTeam, getAllTeams, getTeamMembers } from '../model/team.js';
 import { getAllUsers, getUser } from '../model/user.js'
 import auth from '../middleware/auth.js';
 
@@ -239,6 +239,20 @@ try {
         });
     }catch (err){
         res.status(500).send('Failed to assign user to team.');
+        console.log(err);
+    }
+});
+
+// Get team members
+router.get('/:team_name', auth, async (req, res) => {
+    try {
+        const teamName = req.params.team_name;
+
+        const team = await getTeam(teamName);
+        const teamUsers = await getTeamMembers(team)
+        res.status(200).json(teamUsers);
+    }catch (err){
+        res.status(500).send('Failed to get teams.');
         console.log(err);
     }
 });

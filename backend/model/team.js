@@ -24,9 +24,13 @@ export const getTeam = async (team_name) => {
         where: {
             name: team_name
         }
-    })
+    });
 }
 
 export const getAllTeams = async () => {
     return await Team.findAll();
+}
+
+export const getTeamMembers = async (team) => {
+    return await team.getUsers( { attributes: { exclude: ['password'] } });
 }
