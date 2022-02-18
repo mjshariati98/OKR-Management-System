@@ -9,20 +9,18 @@ import {
     ListItemText,
     Typography,
 } from '@mui/material';
+import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { getTarget } from 'src/api/selectors';
 import 'twin.macro';
 
 export default function OkrPage() {
-    const params = useParams<{ childTargetId?: ID; roundId?: ID }>();
+    const params = useParams<{ okrId?: ID }>();
 
-    const { target, team } = getTarget(params);
-
-    const okr = target.okrs!.find((okr) => okr.round.id === params.roundId);
+    const { data: okr } = useQuery<OKR>(['/okrs/' + params.okrId]);
 
     return (
         <div>
-            <Typography variant="h1">spring round , {team!.name}</Typography>
+            <Typography variant="h1">spring round , {okr!.team.name}</Typography>
             {okr?.objectives.map((objective) => (
                 <Accordion key={objective.id}>
                     <AccordionSummary

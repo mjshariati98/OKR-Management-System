@@ -4,8 +4,8 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { BsFillGrid3X3GapFill } from 'react-icons/bs';
 import { FaList } from 'react-icons/fa';
 import { MdOutlineLogout } from 'react-icons/md';
-import { Link, useParams } from 'react-router-dom';
-import { getTarget } from 'src/api/selectors';
+import { useQuery } from 'react-query';
+import { Link } from 'react-router-dom';
 import 'twin.macro';
 import { Progressbar } from './Progressbar';
 
@@ -77,12 +77,8 @@ const createTargetColumns = (targetType: Target['type']): GridColDef[] => [
 ];
 
 export default function HomePage() {
-    const params = useParams<{ childTargetId?: ID }>();
-
-    const { company, childTarget, target } = getTarget(params);
-
-    const isCompanyLevel = !childTarget;
-    const okrs = target.okrs ?? [];
+    const { data: teams } = useQuery<Team[]>('/teams/');
+    const { data: rounds } = useQuery<Round[]>('/rounds/');
 
     return (
         <Grid
@@ -124,18 +120,21 @@ export default function HomePage() {
                     </ToggleButtonGroup>
                 </Grid>
                 <Grid item xs="auto" className="pl-4">
-                    <Button className="btn btn-large signout-btn" variant="outlined" disableElevation endIcon={<MdOutlineLogout size={18} />}>
+                    <Button
+                        className="btn btn-large signout-btn"
+                        variant="outlined"
+                        disableElevation
+                        endIcon={<MdOutlineLogout size={18} />}
+                    >
                         <span className="mt-[2.5px]">Sign Out</span>
                     </Button>
                 </Grid>
             </Grid>
             <Grid item xs={4} mt={3} container>
-                <DataGrid rows={okrs} columns={okrColumns} />
+                <DataGrid rows={teams!} columns={okrColumns} />
             </Grid>
             <Grid item xs={4} mt={3} container>
-                {isCompanyLevel && (
-                    <DataGrid rows={company.teams} columns={createTargetColumns('team')} />
-                )}
+                <DataGrid rows={rounds!} columns={createTargetColumns('team')} />
             </Grid>
         </Grid>
     );
