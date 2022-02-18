@@ -144,9 +144,9 @@ router.put('/:username', auth, async (req, res) => {
 
         // Response
         res.status(200).send('User updated succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to update the user.');
-        console.log(error);
+        console.log(err);
     }
 });
 

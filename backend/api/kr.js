@@ -32,7 +32,7 @@ router.get('/:okr_id/objectives/:objective_id/', auth, async (req, res) => {
         res.status(200).json(krs);
     } catch (err) {
         res.status(500).send('Failed to list KRs.');
-        console.error(error);
+        console.error(err);
     }
 });
 
@@ -161,9 +161,9 @@ router.put('/:okr_id/objectives/:objective_id/krs/:kr_id', auth, async (req, res
 
         // Response
         res.status(200).send('KR updated succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to update the KR.');
-        console.log(error);
+        console.log(err);
     }
 });
 
@@ -221,8 +221,8 @@ router.delete('/:okr_id/objectives/:objective_id/krs/:kr_id', auth, async (req, 
 
         // Response
         res.status(200).send('KR deleted succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to delete the KR.');
-        console.log(error);
+        console.log(err);
     }
 });

@@ -123,9 +123,9 @@ router.put('/:okr_id', auth, async (req, res) => {
 
         // Response
         res.status(200).send('OKR updated succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to update the OKR.');
-        console.log(error);
+        console.log(err);
     }
 });
 
@@ -169,9 +169,9 @@ router.delete('/:okr_id', auth, async (req, res) => {
 
         // Response
         res.status(200).send('OKR deleted succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to delete the OKR.');
-        console.log(error);
+        console.log(err);
     }
 });
 

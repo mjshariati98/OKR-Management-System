@@ -148,9 +148,9 @@ router.put('/:team_name', auth, async (req, res) => {
 
         // Response
         res.status(200).send('Team updated succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to update the team.');
-        console.log(error);
+        console.log(err);
     }
 });
 
@@ -199,9 +199,9 @@ router.delete('/:team_name', auth, async (req, res) => {
 
         // Response
         res.status(200).send('Team deleted succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to delete the team.');
-        console.log(error);
+        console.log(err);
     }
 });
 

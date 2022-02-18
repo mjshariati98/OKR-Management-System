@@ -135,9 +135,9 @@ router.put('/:okr_id/objectives/:objective_id', auth, async (req, res) => {
 
         // Response
         res.status(200).send('Objective updated succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to update the Objective.');
-        console.log(error);
+        console.log(err);
     }
 });
 
@@ -189,8 +189,8 @@ router.delete('/:okr_id/objectives/:objective_id', auth, async (req, res) => {
 
         // Response
         res.status(200).send('objective deleted succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to delete the objective.');
-        console.log(error);
+        console.log(err);
     }
 });

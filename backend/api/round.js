@@ -79,9 +79,9 @@ router.put('/:round_id', auth, async (req, res) => {
 
         // Response
         res.status(200).send('Round updated succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to update the round.');
-        console.log(error);
+        console.log(err);
     }
 });
 
@@ -116,8 +116,8 @@ router.delete('/:round_id', auth, async (req, res) => {
 
         // Response
         res.status(200).send('Round deleted succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to delete the round.');
-        console.log(error);
+        console.log(err);
     }
 });
