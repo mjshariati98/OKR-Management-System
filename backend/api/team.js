@@ -12,6 +12,10 @@ export default router;
 router.get('/', auth, async (req, res) => {
     try {
         const teams = await getAllTeams();
+        for (const team of teams) {
+            const teamMembers = await getTeamMembers(team);
+            team.setDataValue('members', teamMembers);
+        }
         res.status(200).json(teams);
     }catch (err){
         res.status(500).send('Failed to get teams.');
