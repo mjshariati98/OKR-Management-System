@@ -53,7 +53,7 @@ router.post('/new', auth, async (req, res) => {
         const token = createToken(username, process.env.EXPIRE_DURATION)
 
         // Create new user
-        const password = random_password(process.env.RAND_PASS_LENGTH)
+        const password = username;
         await createNewUser(username, firstname,lastname, email, phone, password)
 
         // Response
@@ -216,13 +216,4 @@ const createToken = (username, expireDuration) => {
         process.env.TOKEN_KEY,
         { expiresIn: expireDuration}
     );
-}
-
-const random_password = (length) => {
-    var result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    for ( var i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
 }
