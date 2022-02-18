@@ -1,9 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { Button, Modal, Paper } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import { TeamFull, UserFull } from 'src/api/entities';
-import { deleteTeam, getTeams, getUsers } from 'src/api/tasks';
+import { deleteTeam } from 'src/api/tasks';
 import 'twin.macro';
 import TeamEdit from './TeamEdit';
 import TeamView from './TeamView';
@@ -11,45 +12,32 @@ import TeamView from './TeamView';
 export default function Teams() {
     const [modalType, setModalType] = useState<'update' | 'add' | null>(null);
     const [editTeam, setEditTeam] = useState<TeamFull | null>(null);
-    const [teams, setTeams] = useState<TeamFull[]>([]);
-    const [users, setUsers] = useState<UserFull[]>([]);
-
-    useEffect(() => {
-        refetchUsers();
-    }, []);
-
-    const refetchUsers = async () => {
-        setUsers(await getUsers());
-    }
-
-    useEffect(() => {
-        refetch();
-    }, []);
-
-    const refetch = async () => {
-        const result = await getTeams();
-        setTeams(result);
-        refetchUsers();
-    };
+    const { data: teams = [], refetch: refetchTeams } = useQuery<TeamFull[]>(['/teams']);
+    const { data: users = [], refetch: refetchUsers } = useQuery<UserFull[]>(['/users']);
 
     const onEditClick = (type: 'update' | 'add', team?: TeamFull) => {
         setModalType(type);
         team && setEditTeam(team);
     };
 
+    const refetch = () => {
+        refetchTeams();
+        refetchUsers();
+    }
+
     const onDeleteClick = async (team: TeamFull) => {
         await deleteTeam(team);
-        refetch();
+        refetch()
     };
 
     const onCloseModal = () => {
         setModalType(null);
         setEditTeam(null);
-        refetch();
+        refetch()
     };
 
     return (
-        <Box tw="mx-auto h-screen" sx={{ maxWidth: "70%" }}>
+        <Box tw="mx-auto h-screen" sx={{ maxWidth: '70%' }}>
             <div tw="p-4 flex flex-col items-center h-screen w-full">
                 <Button
                     variant="contained"
@@ -59,22 +47,24 @@ export default function Teams() {
                     Add
                 </Button>
                 <div tw="flex flex-wrap justify-center px-4 overflow-y-auto w-full">
-                    {teams.sort((a, b) => {
-                        const aDate = new Date(a.createdAt!);
-                        const bDate = new Date(b.createdAt!);
-                        return aDate.getTime() - bDate.getTime();
-                    }).map((t) => {
-                        return (
-                            <TeamView
-                                members={t.members ?? []}
-                                team={t}
-                                users={users}
-                                onChangeMembers={refetch}
-                                onEdit={() => onEditClick('update', t)}
-                                onDelete={() => onDeleteClick(t)}
-                            />
-                        );
-                    })}
+                    {teams
+                        .sort((a, b) => {
+                            const aDate = new Date(a.createdAt!);
+                            const bDate = new Date(b.createdAt!);
+                            return aDate.getTime() - bDate.getTime();
+                        })
+                        .map((t) => {
+                            return (
+                                <TeamView
+                                    members={t.members ?? []}
+                                    team={t}
+                                    users={users}
+                                    onChangeMembers={refetch}
+                                    onEdit={() => onEditClick('update', t)}
+                                    onDelete={() => onDeleteClick(t)}
+                                />
+                            );
+                        })}
                 </div>
             </div>
             <Modal
