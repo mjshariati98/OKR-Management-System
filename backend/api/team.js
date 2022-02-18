@@ -107,7 +107,7 @@ router.put('/:team_name', auth, async (req, res) => {
         
         // update TL
         if (newTeamLeader) {
-            const oldTL = await getUser(team.TeamLeader);
+            const oldTL = await getUser(team.teamLeader);
             const newTL = await getUser(newTeamLeader);
             if (!newTL) {
                 return res.status(404).send('TeamLeader with this username does not exist');
@@ -116,7 +116,7 @@ router.put('/:team_name', auth, async (req, res) => {
             oldTL.role = 'Normal';
             newTL.role = 'TeamLeader';
             newTL.teamName = teamName
-            team.TeamLeader = newTeamLeader;
+            team.teamLeader = newTeamLeader;
             
             await oldTL.save();
             await newTL.save();
@@ -124,7 +124,7 @@ router.put('/:team_name', auth, async (req, res) => {
 
         // Update PM
         if (newProductManager) {
-            const oldPM = await getUser(team.ProductManager);
+            const oldPM = await getUser(team.productManager);
             const newPM = await getUser(newProductManager);
             if (!newPM) {
                 return res.status(404).send('ProductManager with this username does not exist');
@@ -133,7 +133,7 @@ router.put('/:team_name', auth, async (req, res) => {
             oldPM.role = 'Normal';
             newPM.role = 'ProductManager';
             newPM.teamName = teamName
-            team.ProductManager = newProductManager;
+            team.productManager = newProductManager;
             
             await oldPM.save();
             await newPM.save();
@@ -167,14 +167,14 @@ router.delete('/:team_name', auth, async (req, res) => {
         }
 
         // Set TL role to normal
-        const teamTL = await getUser(team.TeamLeader);
+        const teamTL = await getUser(team.teamLeader);
         if (teamTL) {
             teamTL.role = 'Normal';
             await teamTL.save();
         }
 
         // Set PM role to normal
-        const teamPM = await getUser(team.ProductManager);
+        const teamPM = await getUser(team.productManager);
         if (teamPM) {
             teamPM.role = 'Normal';
             await teamPM.save();

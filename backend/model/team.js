@@ -19,8 +19,8 @@ export const createNewTeam = async (name, description, teamLeader, productManage
     return await Team.create({
         name: name,
         description: description,
-        TeamLeader: teamLeader,
-        ProductManager: productManager
+        teamLeader: teamLeader,
+        productManager: productManager
     });
 }
 

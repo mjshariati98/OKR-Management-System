@@ -29,12 +29,12 @@ const syncModels = async () => {
     await Team.sync();
 
     User.hasOne(Team, {
-        as: 'TeamLeader',
-        foreignKey: 'TeamLeader'
+        as: 'teamLeader',
+        foreignKey: 'teamLeader'
     });
     User.hasOne(Team, {
-        as: 'ProductManager',
-        foreignKey: 'ProductManager'
+        as: 'productManager',
+        foreignKey: 'productManager'
     });
     Team.hasMany(User);
 
