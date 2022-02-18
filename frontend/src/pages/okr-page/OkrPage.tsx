@@ -34,7 +34,7 @@ export default function OkrPage() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <List>
-                            {objective.keyResults.map((keyResult) => (
+                            {objective.krs.map((keyResult) => (
                                 <ListItem>
                                     <ListItemText>{keyResult.description}</ListItemText>
                                 </ListItem>

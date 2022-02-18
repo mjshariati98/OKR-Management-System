@@ -12,23 +12,41 @@ interface Team {
 
 interface Round {}
 
-interface OKR {
+interface OKRLite {
     id: number;
     description: string;
-    okrProgress: number;
     roundId: number;
     team: Team['name'];
     createdAt: string;
     updatedAt: string;
+}
+
+interface OKR extends OKRLite {
+    okrProgress: number;
     objectives: Objective[];
 }
 
 interface Objective {
-    id: ID;
+    id: number;
+    title: string;
     description: string;
-    keyResults: KeyResult[];
+    createdAt: string;
+    updatedAt: string;
+    okrId: number;
+    description: string;
+    weight: number;
+    objectiveProgress: number;
+    krs: KeyResult[];
 }
+
 interface KeyRessult {
-    id: ID;
+    id: number;
+    title: string;
+    description: string;
+    weight: number;
+    done: number;
+    createdAt: string;
+    updatedAt: string;
+    objectiveId: number;
     description: string;
 }
