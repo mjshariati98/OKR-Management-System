@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { toast } from 'src/components';
-import { BaseUser, ObjectiveFull, TeamFull, UserFull } from './entities';
+import { BaseUser, KRFull, ObjectiveFull, TeamFull, UserFull } from './entities';
 
 export function createOrUpdateEntity<T>(url: string, entity: any, type: 'add' | 'update') {
     url =
@@ -116,6 +116,33 @@ export async function deleteObjective(objective: ObjectiveFull, okrId: string) {
         method: 'delete',
         url: `/okrs/${okrId}/objectives/${objective.id}`,
     });
+}
+
+export async function getKRs(objectiveId: string, okrId: string) {
+    const res = await axios.request<KRFull[]>({
+        method: "get",
+        url: `/okrs/${okrId}/objectives/${objectiveId}`,
+    })
+    return res.data;
+}
+
+export async function createOrUpdateKR(kr: KRFull, objectiveId: string, okrId: string, type: "add" | "update") {
+    let url = `/okrs/${okrId}/objectives/${objectiveId}/new_kr`;
+    if (type === "update") {
+        url = `/okrs/${okrId}/objectives/${objectiveId}/krs/${kr.id}`;
+    }
+    await axios.request({
+        method: type === "update" ? 'put' : 'post',
+        url: url,
+        data: kr,
+    })
+}
+
+export async function deleteKR(kr: KRFull, objectiveId: string, okrId: string) {
+    await axios.request({
+        method: "delete",
+        url: `/okrs/${okrId}/objectives/${objectiveId}/krs/${kr.id}`
+    })
 }
 
 export async function logout() {

@@ -23,7 +23,7 @@ const App = () => {
 
             <AdvanceRoute exact path="/teams/" component={Teams}/>
 
-            <AdvanceRoute exact path="/okr-page" component={OkrPage}/>
+            <AdvanceRoute exact path="/okr/:okrId" component={OkrPage}/>
 
             <AdvanceRoute exact path="/" component={HomePage} />
             <AdvanceRoute

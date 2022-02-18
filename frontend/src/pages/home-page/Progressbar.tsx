@@ -17,7 +17,6 @@ export const Progressbar = (props: Props) => {
     const { value } = props;
     const red = Math.floor((100-value) * 2.55);
     const green = Math.floor(value * 2.55);
-    console.log(red, green)
     const progressbarBar = css`
         background-color: rgb(${red}, ${green}, 0) !important;
     `;
