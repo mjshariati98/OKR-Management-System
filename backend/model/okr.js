@@ -35,6 +35,14 @@ export const getOKRByRound = async (roundId) => {
     });
 };
 
+export const getOKRByTeam = async (teamName) => {
+    return await OKR.findAll({
+        where: {
+            team: teamName
+        }
+    });
+};
+
 export const getAllOKRs = async () => {
     return await OKR.findAll();
 };

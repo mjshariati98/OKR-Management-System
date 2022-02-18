@@ -1,8 +1,10 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import { createNewTeam, getTeam, getAllTeams, getTeamMembers } from '../model/team.js';
-import { getAllUsers, getUser } from '../model/user.js'
 import auth from '../middleware/auth.js';
+import { createNewTeam, getTeam, getAllTeams, getTeamMembers } from '../model/team.js';
+import { getAllUsers, getUser } from '../model/user.js';
+import { getOKRByTeam } from '../model/okr.js';
+
 
 dotenv.config();
 const router = express.Router();
@@ -328,5 +330,18 @@ router.get('/:team_name', auth, async (req, res) => {
     }catch (err){
         res.status(500).send('Failed to get teams.');
         console.log(err);
+    }
+});
+
+// Get all OKRs of a team
+router.get('/:team_name/okrs', auth, async (req, res) => {
+    try {
+        const teamName = req.params.team_name;
+
+        const okrs = await getOKRByTeam(teamName);
+        res.status(200).json(okrs);
+    } catch (err) {
+        res.status(500).send('Failed to list okrs.');
+        console.error(error);
     }
 });
