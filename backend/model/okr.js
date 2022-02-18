@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize';
-import { dbClient } from '../config/db.js'
+import { dbClient } from '../config/db.js';
 
 export const OKR = dbClient.define('okr', {
     description: {
@@ -10,6 +10,15 @@ export const OKR = dbClient.define('okr', {
     freezeTableName: true
 });
 
+export const getOKR = async (roundId, teamName) => {
+    return await OKR.findOne({
+        where: {
+            roundId: roundId,
+            team: teamName
+        }
+    });
+};
+
 export const getOKRByID = async (id) => {
     return await OKR.findOne({
         where: {
@@ -18,11 +27,10 @@ export const getOKRByID = async (id) => {
     });
 };
 
-export const getOKR = async (roundId, teamName) => {
-    return await OKR.findOne({
+export const getOKRByRound = async (roundId) => {
+    return await OKR.findAll({
         where: {
-            roundId: roundId,
-            team: teamName
+            roundId: roundId
         }
     });
 };
