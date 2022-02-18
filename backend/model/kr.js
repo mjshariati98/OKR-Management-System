@@ -10,10 +10,9 @@ export const KR = dbClient.define('kr', {
         type: Sequelize.STRING,
         allowNull: true
     },
-    stake: {
-        type: Sequelize.FLOAT,
-        allowNull: false,
-        description: 'in percent'
+    weight: {
+        type: Sequelize.INTEGER,
+        allowNull: false
     }
 }, {
     freezeTableName: true

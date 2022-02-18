@@ -10,11 +10,27 @@ export const Objective = dbClient.define('objective', {
         type: Sequelize.STRING,
         allowNull: true
     },
-    stake: {
-        type: Sequelize.FLOAT,
-        allowNull: false,
-        description: 'in percent'
+    weight: {
+        type: Sequelize.INTEGER,
+        allowNull: false
     }
 }, {
     freezeTableName: true
 });
+
+export const createNewObjective = async (title, description, weight, okrID) => {
+    return await Objective.create({
+        title: title,
+        description: description,
+        weight: weight,
+        okrId: okrID
+    });
+};
+
+export const getObjective = async (objective_id) => {
+    return await Objective.findOne({
+        where: {
+            id: objective_id
+        }
+    });
+};

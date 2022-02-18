@@ -20,6 +20,7 @@ router.get('/', auth, async (req, res) => {
         console.error(error);
     }
 });
+
 // Create new OKR
 router.post('/new', auth, async (req, res) => {
     try {
@@ -79,19 +80,11 @@ router.put('/:okr_id', auth, async (req, res) => {
     try {
         const userRole = req.userRole;
         const okrID = req.params.okr_id;
-        const { description:newDescription, teamName:newTeamName, roundId:newRoundId } = req.body;
+        const { description:newDescription } = req.body;
 
         // Check authority
         if (userRole != 'Admin' && userRole != 'TeamLeader' && userRole != 'ProductManager') {
             return res.status(401).send('You dont have the permission to edit OKRs.');
-        }
-
-        // TLs and PMs only can edit OKRs of their own teams
-        if (userRole == 'TeamLeader' || userRole == 'ProductManager') {
-            const user = await getUser(req.user);
-            if (user.teamName != teamName) {
-                return res.status(401).send('You dont have the permission to edit an OKR of other teams.');
-            }
         }
 
         // Get the OKR
@@ -100,40 +93,18 @@ router.put('/:okr_id', auth, async (req, res) => {
             return res.status(404).send('OKR with this id does not Exist.');
         }
 
+        // TLs and PMs only can edit OKRs of their own teams
+        if (userRole == 'TeamLeader' || userRole == 'ProductManager') {
+            const user = await getUser(req.user);
+            if (user.teamName != okr.team) {
+                return res.status(401).send('You dont have the permission to edit an OKR of other teams.');
+            }
+        }
+
         // update description
         if (newDescription && newDescription != okr.description) {
             okr.description = newDescription;
         }
-
-        // update team & round
-        var team = okr.team;
-        var roundID = okr.roundId;
-        if (newTeamName && newTeamName != okr.team) {
-            // check new team exists
-            const newTeam = await getTeam(newTeamName);
-            if (!newTeam) {
-                return res.status(404).send('Team with this name does not exist.');
-            } else{
-                team = newTeamName;
-            }
-        }
-        if (newRoundId && newRoundId != okr.roundId) {
-            // check new round exists
-            const newRound = await getRound(newRoundId);
-            if (!newRound) {
-                return res.status(404).send('Round with this id does not exist.');
-            } else{
-                roundID = newRoundId;
-            }
-        }
-        // check there is not exist okr for new (Team, Round)
-        const oldOKR = await getOKR(roundID, team);
-        if (oldOKR) {
-            return res.status(409).send('OKR for this team and round already exist.');
-        }
-
-        okr.roundId = roundID;
-        okr.team = team;
         await okr.save();
 
         // Response
@@ -155,18 +126,18 @@ router.delete('/:okr_id', auth, async (req, res) => {
             return res.status(401).send('You dont have the permission to delete OKRs.');
         }
 
-        // TLs and PMs only can delete OKRs of their own teams
-        if (userRole == 'TeamLeader' || userRole == 'ProductManager') {
-            const user = await getUser(req.user);
-            if (user.teamName != teamName) {
-                return res.status(401).send('You dont have the permission to delete an OKR of other teams.');
-            }
-        }
-
         // Get the OKR
         const okr = await getOKRByID(okrID);
         if (!okr) {
             return res.status(409).send('OKR with this id does not Exist.');
+        }
+
+        // TLs and PMs only can delete OKRs of their own teams
+        if (userRole == 'TeamLeader' || userRole == 'ProductManager') {
+            const user = await getUser(req.user);
+            if (user.teamName != okr.team) {
+                return res.status(401).send('You dont have the permission to delete an OKR of other teams.');
+            }
         }
 
         // Delete the OKR

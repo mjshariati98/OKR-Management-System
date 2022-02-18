@@ -6,6 +6,7 @@ import user from './api/user.js';
 import team from './api/team.js';
 import round from './api/round.js';
 import okr from './api/okr.js'
+import objective from './api/objective.js'
 
 dotenv.config(); 
 
@@ -24,5 +25,6 @@ app.use('/okrs', throttle)
 app.use('/users', user);
 app.use('/teams', team);
 app.use('/rounds',round);
-app.use('/okrs', okr)
+app.use('/okrs', okr);
+app.use('/okrs', objective);
 
