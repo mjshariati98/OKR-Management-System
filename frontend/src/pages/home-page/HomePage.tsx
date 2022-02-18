@@ -10,15 +10,14 @@ import { Link } from 'react-router-dom';
 import 'twin.macro';
 import { Progressbar } from './Progressbar';
 
-const okrColumns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'round', headerName: 'Round', width: 300, valueGetter: (p) => p.row.round.title },
+const teamColumns: GridColDef[] = [
+    { field: 'name', headerName: 'name', width: 100 },
     {
-        field: 'progressPercent',
-        headerName: 'Progrss Percent',
+        field: 'done',
+        headerName: 'progressPercent',
         width: 300,
         renderCell: (param) => {
-            const value = param.row?.progressPercent;
+            const value = param.row?.done;
             return value ? <Progressbar value={value} /> : '---';
         },
     },
@@ -29,7 +28,7 @@ const okrColumns: GridColDef[] = [
         renderCell: (param) => (
             <Button
                 component={Link}
-                to={`${window.location.pathname}/round/${param.row.round.id}`.replace('//', '/')}
+                to={`${window.location.pathname}/team/${param.row.name}`.replace('//', '/')}
             >
                 View
             </Button>
@@ -37,17 +36,11 @@ const okrColumns: GridColDef[] = [
     },
 ];
 
-const createTargetColumns = (targetType: Target['type']): GridColDef[] => [
-    { field: 'id', headerName: 'ID', width: 100 },
+const roundColumns: GridColDef[] = [
+    { field: 'id', headerName: 'id', width: 100 },
     {
         field: 'name',
-        headerName: (
-            {
-                user: 'Name',
-                team: 'Team',
-                company: 'Company',
-            } as const
-        )[targetType],
+        headerName: 'name',
         width: 300,
     },
     {
@@ -92,6 +85,8 @@ export default function HomePage() {
         if (newFilterBy.length) setFilterBy(newFilterBy);
     };
 
+    if (!teams || !rounds) return null;
+
     return (
         <div className="container pt-6">
             <Grid container alignItems="center" justifyContent="space-between">
@@ -132,21 +127,10 @@ export default function HomePage() {
                         </ToggleButton>
                     </ToggleButtonGroup>
                 </Grid>
-                {/* <Grid item xs="auto" className="pl-2 md:pl-3 lg:pl-4">
-                    <Button
-                        className="btn signout-btn"
-                        variant="outlined"
-                        size="small"
-                        disableElevation
-                        endIcon={<MdOutlineLogout size={18} />}
-                    >
-                        <span className="mt-[3px]">Sign Out</span>
-                    </Button>
-                </Grid> */}
             </Grid>
             {filterBy.forEach((f) => (
                 <div className="w-full h-96 mt-8" style={{ height: 400, width: '100%' }}>
-                    <DataGrid rows={f === 'team' ? teams! : rounds!} columns={okrColumns} />
+                    <DataGrid rows={f === 'team' ? teams! : rounds!} columns={f === 'team' ? teamColumns! : roundColumns!} />
                 </div>
             ))}
         </div>

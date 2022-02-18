@@ -13,6 +13,12 @@ export const KR = dbClient.define('kr', {
     weight: {
         type: Sequelize.INTEGER,
         allowNull: false
+    },
+    done: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+        defaultValue: 0.0,
+        description: "in percent"
     }
 }, {
     freezeTableName: true

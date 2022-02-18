@@ -32,7 +32,7 @@ router.get('/:okr_id/objectives/:objective_id/', auth, async (req, res) => {
         res.status(200).json(krs);
     } catch (err) {
         res.status(500).send('Failed to list KRs.');
-        console.error(error);
+        console.error(err);
     }
 });
 
@@ -76,10 +76,11 @@ router.post('/:okr_id/objectives/:objective_id/new_kr', auth, async (req, res) =
         }
 
         // Create the KR
-        await createNewKR(title, description, weight, objectiveID);
+        const kr = await createNewKR(title, description, weight, objectiveID);
 
         res.status(201).json({
-            message: 'KR added to Objective successfully'
+            message: 'KR added to Objective successfully',
+            'id': kr.id
         });
     }catch (err){
         res.status(500).send('Failed to add KR.');
@@ -94,7 +95,7 @@ router.put('/:okr_id/objectives/:objective_id/krs/:kr_id', auth, async (req, res
         const okrID = req.params.okr_id;
         const objectiveID = req.params.objective_id;
         const krID = req.params.kr_id;
-        const { title:newTitle, description:newDescription, weight:newWeight } = req.body;
+        const { title:newTitle, description:newDescription, weight:newWeight, done:newDone } = req.body;
 
         // Check authority
         if (userRole != 'Admin' && userRole != 'TeamLeader' && userRole != 'ProductManager') {
@@ -152,13 +153,18 @@ router.put('/:okr_id/objectives/:objective_id/krs/:kr_id', auth, async (req, res
             kr.weight = newWeight;
         }
 
+        // update done
+        if (newDone && newDone != kr.done) {
+            kr.done = newDone;
+        }
+
         await kr.save();
 
         // Response
         res.status(200).send('KR updated succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to update the KR.');
-        console.log(error);
+        console.log(err);
     }
 });
 
@@ -216,8 +222,8 @@ router.delete('/:okr_id/objectives/:objective_id/krs/:kr_id', auth, async (req, 
 
         // Response
         res.status(200).send('KR deleted succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to delete the KR.');
-        console.log(error);
+        console.log(err);
     }
 });

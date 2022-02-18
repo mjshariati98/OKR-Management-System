@@ -4,7 +4,8 @@ import auth from '../middleware/auth.js';
 import { getOKRByID } from '../model/okr.js';
 import { getUser } from '../model/user.js';
 import { createNewObjective, getObjective } from '../model/objective.js';
-import { KR } from '../model/kr.js'; 
+import { KR } from '../model/kr.js';
+import { calculateObjectiveProgress } from './okr.js';
 
 dotenv.config(); 
 const router = express.Router();
@@ -22,10 +23,14 @@ router.get('/:okr_id/objectives', auth, async (req, res) => {
         }
         
         const objectives = await okr.getObjectives({ include: KR });
+        for (const objective of objectives) {
+            const objectiveProgress = calculateObjectiveProgress(objective);
+            objective.setDataValue('objectiveProgress', objectiveProgress)
+        }
         res.status(200).json(objectives);
     } catch (err) {
         res.status(500).send('Failed to list Objectives.');
-        console.error(error);
+        console.error(err);
     }
 });
 
@@ -62,10 +67,11 @@ router.post('/:okr_id/new_objective', auth, async (req, res) => {
         }
 
         // Create the objective
-        await createNewObjective(title, description, weight, okrID);
+        const objective = await createNewObjective(title, description, weight, okrID);
 
         res.status(201).json({
-            message: 'Objective added to OKR successfully'
+            message: 'Objective added to OKR successfully',
+            id: objective.id
         });
     }catch (err){
         res.status(500).send('Failed to add objective.');
@@ -130,9 +136,9 @@ router.put('/:okr_id/objectives/:objective_id', auth, async (req, res) => {
 
         // Response
         res.status(200).send('Objective updated succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to update the Objective.');
-        console.log(error);
+        console.log(err);
     }
 });
 
@@ -184,8 +190,8 @@ router.delete('/:okr_id/objectives/:objective_id', auth, async (req, res) => {
 
         // Response
         res.status(200).send('objective deleted succussfully!');
-    } catch (error) {
+    } catch (err) {
         res.status(500).send('Failed to delete the objective.');
-        console.log(error);
+        console.log(err);
     }
 });

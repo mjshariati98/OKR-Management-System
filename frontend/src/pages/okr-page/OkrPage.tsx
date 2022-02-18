@@ -18,10 +18,12 @@ export default function OkrPage() {
 
     const { data: okr } = useQuery<OKR>(['/okrs/' + params.okrId]);
 
+    if (!okr) return null;
+
     return (
         <div>
-            <Typography variant="h1">spring round , {okr!.team.name}</Typography>
-            {okr?.objectives.map((objective) => (
+            <Typography variant="h1">spring round , {''}</Typography>
+            {okr.objectives.map((objective) => (
                 <Accordion key={objective.id}>
                     <AccordionSummary
                         expandIcon={<ExpandMore />}
@@ -32,7 +34,7 @@ export default function OkrPage() {
                     </AccordionSummary>
                     <AccordionDetails>
                         <List>
-                            {objective.keyResults.map((keyResult) => (
+                            {objective.krs.map((keyResult) => (
                                 <ListItem>
                                     <ListItemText>{keyResult.description}</ListItemText>
                                 </ListItem>

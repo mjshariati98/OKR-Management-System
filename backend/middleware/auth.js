@@ -15,8 +15,8 @@ const verifyToken = async (req, res, next) => {
         req.user = username;
         const role = await getRole(username);
         req.userRole = role;
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        console.log(err);
         return res.status(401).send('Invalid Token. Login again!');
     }
     return next();
