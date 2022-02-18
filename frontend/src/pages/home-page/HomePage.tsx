@@ -3,11 +3,12 @@ import { Button, Dialog, Grid, ToggleButton, ToggleButtonGroup } from '@mui/mate
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import * as React from 'react';
 import { useState } from 'react';
-import { BsFillGrid3X3GapFill } from 'react-icons/bs';
-import { FaList } from 'react-icons/fa';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
 import { useToggle } from 'react-use';
+import { endPoints } from 'src/api/enpoints';
+import { UserFull } from 'src/api/entities';
+import { Role } from 'src/api/enums';
 import 'twin.macro';
 import OkrEdit from './OkrEdit';
 
@@ -33,10 +34,7 @@ const teamColumns: GridColDef[] = [
         headerName: 'actions',
         sortable: false,
         renderCell: (param) => (
-            <Button
-                component={Link}
-                to={`/okrs/team/${param.row.name}`.replace('//', '/')}
-            >
+            <Button component={Link} to={`/okrs/team/${param.row.name}`.replace('//', '/')}>
                 View
             </Button>
         ),
@@ -55,10 +53,7 @@ const roundColumns: GridColDef[] = [
         headerName: 'actions',
         sortable: false,
         renderCell: (param) => (
-            <Button
-                component={Link}
-                to={`/okrs/round/${param.row.id}/`}
-            >
+            <Button component={Link} to={`/okrs/round/${param.row.id}/`}>
                 View
             </Button>
         ),
@@ -70,6 +65,8 @@ export default function HomePage() {
 
     const { data: teams } = useQuery<Team[]>('/teams/');
     const { data: rounds } = useQuery<Round[]>('/rounds/');
+    const { data, error } = useQuery<UserFull>(endPoints.profile);
+    const hasPrivateRouteAccess = !!data && data.role === Role.Admin;
 
     const handleFilterByChange = (event: React.MouseEvent<HTMLElement>, newFilterBy: string[]) => {
         if (newFilterBy.length) setFilterBy(newFilterBy);
@@ -104,9 +101,11 @@ export default function HomePage() {
                     </ToggleButtonGroup>
                 </Grid>
                 <Grid item className="pl-2 md:pl-3 lg:pl-4">
-                    <Button variant="contained" onClick={toggleOkrModal}>
-                        Add OKR
-                    </Button>
+                    {hasPrivateRouteAccess && (
+                        <Button variant="contained" onClick={toggleOkrModal}>
+                            Add OKR
+                        </Button>
+                    )}
                     <Dialog open={okrModal} onClose={toggleOkrModal}>
                         <OkrEdit teams={teams} rounds={rounds} onClose={toggleOkrModal} />
                     </Dialog>

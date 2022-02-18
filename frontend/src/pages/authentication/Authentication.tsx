@@ -52,7 +52,6 @@ export default function Authentication(props: Props) {
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                     <TextField
-                        sx={{ m: '0.3em' }}
                         required
                         id="username"
                         label="Username"
@@ -60,7 +59,6 @@ export default function Authentication(props: Props) {
                         autoComplete="username"
                     />
                     <TextField
-                        sx={{ m: '0.3em' }}
                         required
                         name="password"
                         label="Password"

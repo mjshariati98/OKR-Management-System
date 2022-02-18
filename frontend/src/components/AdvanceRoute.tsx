@@ -17,7 +17,7 @@ export default function AdvanceRoute(props: Props) {
     if (error && mode === 'authorized') return <Redirect to="/authentication" />;
     if (data && mode === 'unauthorized') return <Redirect to="/" />;
 
-    const hasPrivateRouteAccess = !!data && (data.role === Role.TL || data.role === Role.Admin)
+    const hasPrivateRouteAccess = !!data && (data.role === Role.Admin)
 
     return (
         <>
