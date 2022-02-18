@@ -90,6 +90,11 @@ router.delete('/:username', auth, async (req, res) => {
             return res.status(409).send('User with this username does not exists.');
         }
 
+        // Check user is not TL or PM
+        if (user.role == 'TeamLeader' || user.role == 'ProductManager') {
+            return res.status(400).send('You can\'t remove non-Noraml users.');
+        }
+
         user.destroy();
 
         // Response
@@ -197,7 +202,7 @@ router.post('/sign_out', async (req, res) => {
 router.get('/profile', auth, async (req, res) => {
     try {
         const user = await getUser(req.user);
-        res.status(200).send({ user });
+        res.status(200).send(user);
     } catch (err) {
         res.status(500).send('Failed to get user profile.');
         console.log(err);
