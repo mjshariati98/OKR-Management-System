@@ -5,9 +5,8 @@ import * as React from 'react';
 import { useState } from 'react';
 import { BsFillGrid3X3GapFill } from 'react-icons/bs';
 import { FaList } from 'react-icons/fa';
-import { MdOutlineLogout } from 'react-icons/md';
-import { Link, useParams } from 'react-router-dom';
-import { getTarget } from 'src/api/selectors';
+import { useQuery } from 'react-query';
+import { Link } from 'react-router-dom';
 import 'twin.macro';
 import { Progressbar } from './Progressbar';
 
@@ -79,14 +78,11 @@ const createTargetColumns = (targetType: Target['type']): GridColDef[] => [
 ];
 
 export default function HomePage() {
-    const params = useParams<{ childTargetId?: ID }>();
     const [filterBy, setFilterBy] = useState(['team']);
     const [viewMode, setViewMode] = useState('list');
 
-    const { company, childTarget, target } = getTarget(params);
-
-    const isCompanyLevel = !childTarget;
-    const okrs = target.okrs ?? [];
+    const { data: teams } = useQuery<Team[]>('/teams/');
+    const { data: rounds } = useQuery<Round[]>('/rounds/');
 
     const handleViewModeChange = (event: React.MouseEvent<HTMLElement>, newViewMode: string) => {
         setViewMode(newViewMode);
@@ -97,12 +93,14 @@ export default function HomePage() {
     };
 
     return (
-        <div className="max-w-screen-xl px-8 pt-8 mx-auto items-start">
+        <div className="container pt-6">
             <Grid container alignItems="center" justifyContent="space-between">
                 <Grid item xs>
-                    <h1 className="font-bold text-sky-600 text-3xl">OKR Management System</h1>
+                    <h1 className="font-bold text-sky-600 text-2xl lg:text-3xl">
+                        OKR Management System
+                    </h1>
                 </Grid>
-                <Grid item xs="auto" className="px-4">
+                <Grid item xs="auto" className="hidden md:block px-2 md:px-3 lg:px-4">
                     <ToggleButtonGroup
                         color="primary"
                         size="small"
@@ -110,15 +108,15 @@ export default function HomePage() {
                         exclusive
                         onChange={handleViewModeChange}
                     >
-                        <ToggleButton value="list">
+                        <ToggleButton className="!py-1" value="list">
                             <FaList size={15} />
                         </ToggleButton>
-                        <ToggleButton value="grid">
+                        <ToggleButton className="!py-1" value="grid">
                             <BsFillGrid3X3GapFill size={15} />
                         </ToggleButton>
                     </ToggleButtonGroup>
                 </Grid>
-                <Grid item xs="auto" className="px-4">
+                <Grid item xs="auto" className="pl-2 md:pl-3 lg:pl-4">
                     <span className="mr-3 text-gray-300 text-sm">Filter By:</span>
                     <ToggleButtonGroup
                         color="primary"
@@ -126,33 +124,31 @@ export default function HomePage() {
                         value={filterBy}
                         onChange={handleFilterByChange}
                     >
-                        <ToggleButton value="team">Team</ToggleButton>
-                        <ToggleButton value="round">Round</ToggleButton>
+                        <ToggleButton className="!py-1" value="team">
+                            Team
+                        </ToggleButton>
+                        <ToggleButton className="!py-1" value="round">
+                            Round
+                        </ToggleButton>
                     </ToggleButtonGroup>
                 </Grid>
-                <Grid item xs="auto" className="pl-4">
+                {/* <Grid item xs="auto" className="pl-2 md:pl-3 lg:pl-4">
                     <Button
-                        className="btn btn-large signout-btn"
+                        className="btn signout-btn"
                         variant="outlined"
                         size="small"
                         disableElevation
                         endIcon={<MdOutlineLogout size={18} />}
                     >
-                        <span className="mt-[2.5px]">Sign Out</span>
+                        <span className="mt-[3px]">Sign Out</span>
                     </Button>
-                </Grid>
+                </Grid> */}
             </Grid>
-            <div className="w-full h-96 mt-8" style={{ height: 400, width: '100%' }}>
-                <DataGrid
-                    rows={okrs}
-                    columns={okrColumns}
-                />
-            </div>
-            {/* <Grid item xs={4} mt={3} container>
-                {isCompanyLevel && (
-                    <DataGrid rows={company.teams} columns={createTargetColumns('team')} />
-                )}
-            </Grid> */}
+            {filterBy.forEach((f) => (
+                <div className="w-full h-96 mt-8" style={{ height: 400, width: '100%' }}>
+                    <DataGrid rows={f === 'team' ? teams! : rounds!} columns={okrColumns} />
+                </div>
+            ))}
         </div>
     );
 }

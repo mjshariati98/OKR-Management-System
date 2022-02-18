@@ -1,7 +1,7 @@
 type ID = string;
 
 type ChildTarget = User | Team ;
-type Target = ChildTarget | Company;
+type Target = Team;
 
 interface User {
     id: UserID;
@@ -25,7 +25,7 @@ interface Team {
 interface OKR {
     id: OkrID;
     round: Round;
-    target: Target;
+    team: Team;
     objectives: Objective[];
     progressPercent: number;
 }
