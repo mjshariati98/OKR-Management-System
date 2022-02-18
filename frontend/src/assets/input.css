@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply flex flex-row items-center justify-center border transition-all !important;
+  }
+  .btn-large {
+    @apply px-4 py-2 !important;
+  }
+  .signout-btn {
+    @apply bg-white text-red-500 border-red-500 rounded-full uppercase hover:bg-red-500 hover:text-white !important;
+  }
+}
