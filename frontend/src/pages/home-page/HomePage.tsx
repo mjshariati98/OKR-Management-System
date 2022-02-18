@@ -67,14 +67,9 @@ const roundColumns: GridColDef[] = [
 
 export default function HomePage() {
     const [filterBy, setFilterBy] = useState(['team']);
-    const [viewMode, setViewMode] = useState('list');
 
     const { data: teams } = useQuery<Team[]>('/teams/');
     const { data: rounds } = useQuery<Round[]>('/rounds/');
-
-    const handleViewModeChange = (event: React.MouseEvent<HTMLElement>, newViewMode: string) => {
-        setViewMode(newViewMode);
-    };
 
     const handleFilterByChange = (event: React.MouseEvent<HTMLElement>, newFilterBy: string[]) => {
         if (newFilterBy.length) setFilterBy(newFilterBy);
@@ -91,22 +86,6 @@ export default function HomePage() {
                     <h1 className="font-bold text-sky-600 text-2xl lg:text-3xl">
                         OKR Management System
                     </h1>
-                </Grid>
-                <Grid item xs="auto" className="hidden md:block px-2 md:px-3 lg:px-4">
-                    <ToggleButtonGroup
-                        color="primary"
-                        size="small"
-                        value={viewMode}
-                        exclusive
-                        onChange={handleViewModeChange}
-                    >
-                        <ToggleButton className="!py-1" value="list">
-                            <FaList size={15} />
-                        </ToggleButton>
-                        <ToggleButton className="!py-1" value="grid">
-                            <BsFillGrid3X3GapFill size={15} />
-                        </ToggleButton>
-                    </ToggleButtonGroup>
                 </Grid>
                 <Grid item xs="auto" className="pl-2 md:pl-3 lg:pl-4">
                     <span className="mr-3 text-gray-300 text-sm">Filter By:</span>
