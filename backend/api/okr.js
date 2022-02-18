@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import auth from '../middleware/auth.js';
-import { createNewOKR, getOKR, getOKRByID, getAllOKRs } from '../model/okr.js';
+import { createNewOKR, getOKR, getOKRByID, getAllOKRs, getOKRByTeam, getOKRByRound } from '../model/okr.js';
 import { getTeam } from '../model/team.js';
 import { getRound } from '../model/round.js';
 import { getUser } from '../model/user.js';
@@ -18,6 +18,20 @@ router.get('/', auth, async (req, res) => {
     } catch (err) {
         res.status(500).send('Failed to list OKRs.');
         console.error(error);
+    }
+});
+
+// Get OKR by ID
+router.get('/:okr_id', auth, async (req, res) => {
+    try {
+        const okrID = req.params.okr_id;
+
+        const okr = await getOKRByID(okrID);
+        const okrWithProgress = calculateOKRProgress(okr);
+        res.status(200).json(okrWithProgress);
+    } catch (err) {
+        res.status(500).send('Failed to list OKRs.');
+        console.error(err);
     }
 });
 
@@ -160,3 +174,65 @@ router.delete('/:okr_id', auth, async (req, res) => {
         console.log(error);
     }
 });
+
+// Get all OKRs of a team
+router.get('/by_team/:team_name', auth, async (req, res) => {
+    try {
+        const teamName = req.params.team_name;
+
+        const okrs = await getOKRByTeam(teamName);
+        for (const okr of okrs) {
+            calculateOKRProgress(okr);
+        }
+        res.status(200).json(okrs);
+    } catch (err) {
+        res.status(500).send('Failed to list okrs.');
+        console.error(err);
+    }
+});
+
+// Get all OKRs in a round
+router.get('/by_round/:round_id', auth, async (req, res) => {
+    try {
+        const roundID = req.params.round_id;
+
+        const okrs = await getOKRByRound(roundID);
+        for (const okr of okrs) {
+            calculateOKRProgress(okr);
+        }
+        res.status(200).json(okrs);
+    } catch (err) {
+        res.status(500).send('Failed to list okrs.');
+        console.error(err);
+    }
+});
+
+
+// helper functions
+export const calculateOKRProgress = (okr) => {
+    var sumWeights = 0;
+    for (const objective of okr.objectives) {
+        const objectiveProgress = calculateObjectiveProgress(objective);
+        objective.setDataValue('objectiveProgress', objectiveProgress)
+
+        sumWeights += objective.weight;
+    }
+    var okrProgress = 0;
+    for (const objective of okr.objectives) {
+        okrProgress += (objective.weight / sumWeights) * objective.getDataValue('objectiveProgress');
+    }
+    okr.setDataValue('okrProgress', okrProgress)
+    return okr;
+}
+
+export const calculateObjectiveProgress = (objective) => {
+    var sumWeights = 0;
+    for (const kr of objective.krs) {
+        sumWeights += kr.weight;
+    }
+    var progress = 0;
+    for (const kr of objective.krs) {
+        progress += (kr.weight / sumWeights) * kr.done;
+    }
+    return progress;
+}

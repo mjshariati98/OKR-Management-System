@@ -94,7 +94,7 @@ router.put('/:okr_id/objectives/:objective_id/krs/:kr_id', auth, async (req, res
         const okrID = req.params.okr_id;
         const objectiveID = req.params.objective_id;
         const krID = req.params.kr_id;
-        const { title:newTitle, description:newDescription, weight:newWeight } = req.body;
+        const { title:newTitle, description:newDescription, weight:newWeight, done:newDone } = req.body;
 
         // Check authority
         if (userRole != 'Admin' && userRole != 'TeamLeader' && userRole != 'ProductManager') {
@@ -150,6 +150,11 @@ router.put('/:okr_id/objectives/:objective_id/krs/:kr_id', auth, async (req, res
         // update weight
         if (newWeight && newWeight != kr.weight) {
             kr.weight = newWeight;
+        }
+
+        // update done
+        if (newDone && newDone != kr.done) {
+            kr.done = newDone;
         }
 
         await kr.save();

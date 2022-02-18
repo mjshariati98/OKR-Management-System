@@ -4,7 +4,8 @@ import auth from '../middleware/auth.js';
 import { getOKRByID } from '../model/okr.js';
 import { getUser } from '../model/user.js';
 import { createNewObjective, getObjective } from '../model/objective.js';
-import { KR } from '../model/kr.js'; 
+import { KR } from '../model/kr.js';
+import { calculateObjectiveProgress } from './okr.js';
 
 dotenv.config(); 
 const router = express.Router();
@@ -22,10 +23,14 @@ router.get('/:okr_id/objectives', auth, async (req, res) => {
         }
         
         const objectives = await okr.getObjectives({ include: KR });
+        for (const objective of objectives) {
+            const objectiveProgress = calculateObjectiveProgress(objective);
+            objective.setDataValue('objectiveProgress', objectiveProgress)
+        }
         res.status(200).json(objectives);
     } catch (err) {
         res.status(500).send('Failed to list Objectives.');
-        console.error(error);
+        console.error(err);
     }
 });
 

@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import express from 'express';
 import auth from '../middleware/auth.js';
 import { createNewRound, getRound, getAllRounds } from '../model/round.js';
-import { getOKRByRound } from '../model/okr.js';
 
 dotenv.config();
 const router = express.Router();
@@ -122,17 +121,3 @@ router.delete('/:round_id', auth, async (req, res) => {
         console.log(error);
     }
 });
-
-// Get all OKRs in a round
-router.get('/:round_id', auth, async (req, res) => {
-    try {
-        const roundID = req.params.round_id;
-
-        const okrs = await getOKRByRound(roundID);
-        res.status(200).json(okrs);
-    } catch (err) {
-        res.status(500).send('Failed to list okrs.');
-        console.error(error);
-    }
-});
-
