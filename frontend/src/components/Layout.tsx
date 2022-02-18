@@ -16,7 +16,7 @@ const Layout = (props: {hasPrivateRouteAccess: boolean}) => {
                 justifyContent="space-between"
             >
                 <Grid item xs>
-                    {hasPrivateRouteAccess && <Link className="mx-2 text-white" to="/">Home</Link>}
+                    <Link className="mx-2 text-white" to="/">Home</Link>
                     {hasPrivateRouteAccess && <Link className="mx-2 text-white" to="/users">Users</Link>}
                     {hasPrivateRouteAccess && <Link className="mx-2 text-white" to="/teams">Teams</Link>}
                 </Grid>
