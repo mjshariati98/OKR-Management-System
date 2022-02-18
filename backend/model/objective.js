@@ -27,10 +27,10 @@ export const createNewObjective = async (title, description, weight, okrID) => {
     });
 };
 
-export const getObjective = async (objective_id) => {
+export const getObjective = async (objectiveID) => {
     return await Objective.findOne({
         where: {
-            id: objective_id
+            id: objectiveID
         }
     });
 };

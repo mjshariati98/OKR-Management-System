@@ -3,38 +3,46 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import { getOKRByID } from '../model/okr.js';
 import { getUser } from '../model/user.js';
-import { createNewObjective, getObjective } from '../model/objective.js';
-import { KR } from '../model/kr.js'; 
+import { getObjective } from '../model/objective.js';
+import { createNewKR, getKR } from '../model/kr.js';
 
 dotenv.config(); 
 const router = express.Router();
 export default router;
 
-// Get all objectives of an OKR
-router.get('/:okr_id/objectives', auth, async (req, res) => {
+// Get all KRs of an Objective
+router.get('/:okr_id/objectives/:objective_id/', auth, async (req, res) => {
     try {
         const okrID = req.params.okr_id;
+        const objectiveID = req.params.objective_id;
 
         // check OKR exist
         const okr = await getOKRByID(okrID);    
         if (!okr) {
             return res.status(404).send('OKR with this id does not exist.');
         }
+
+        // check Objective exist
+        const objective = await getObjective(objectiveID);    
+        if (!objective) {
+            return res.status(404).send('OBjetive with this id does not exist.');
+        }
         
-        const objectives = await okr.getObjectives({ include: KR });
-        res.status(200).json(objectives);
+        const krs = await objective.getKrs();
+        res.status(200).json(krs);
     } catch (err) {
-        res.status(500).send('Failed to list Objectives.');
+        res.status(500).send('Failed to list KRs.');
         console.error(error);
     }
 });
 
-// Create new Objective
-router.post('/:okr_id/new_objective', auth, async (req, res) => {
+// Create new KR
+router.post('/:okr_id/objectives/:objective_id/new_kr', auth, async (req, res) => {
     try {
         
         const userRole = req.userRole;
         const okrID = req.params.okr_id;
+        const objectiveID = req.params.objective_id;
         const { title, description, weight } = req.body;
 
         // Check authority
@@ -42,17 +50,17 @@ router.post('/:okr_id/new_objective', auth, async (req, res) => {
             return res.status(401).send('You dont have the permission to create a new objective.');
         }
 
-        // check OKR exist
+        // check OKR exists
         const okr = await getOKRByID(okrID);
         if (!okr) {
             return res.status(404).send('OKR with this id does not exist.');
         }
 
-        // TLs and PMs only can create Objectives for their own teams
+        // TLs and PMs only can create KRs for their own teams
         if (userRole == 'TeamLeader' || userRole == 'ProductManager') {
             const user = await getUser(req.user);
             if (user.teamName != okr.team) {
-                return res.status(401).send('You dont have the permission to create a new objective for other teams.');
+                return res.status(401).send('You dont have the permission to create a new KR for other teams.');
             }
         }
 
@@ -61,24 +69,31 @@ router.post('/:okr_id/new_objective', auth, async (req, res) => {
             return res.status(400).send('Title and weight fields are required.');
         }
 
-        // Create the objective
-        await createNewObjective(title, description, weight, okrID);
+        // check Objective exists
+        const objective = await getObjective(objectiveID);
+        if (!objective) {
+            return res.status(404).send('Objective with this id does not exist.');
+        }
+
+        // Create the KR
+        await createNewKR(title, description, weight, objectiveID);
 
         res.status(201).json({
-            message: 'Objective added to OKR successfully'
+            message: 'KR added to Objective successfully'
         });
     }catch (err){
-        res.status(500).send('Failed to add objective.');
+        res.status(500).send('Failed to add KR.');
         console.log(err);
     }
 });
 
-// Edit Objective
-router.put('/:okr_id/objectives/:objective_id', auth, async (req, res) => {
+// Edit KR
+router.put('/:okr_id/objectives/:objective_id/krs/:kr_id', auth, async (req, res) => {
     try {
         const userRole = req.userRole;
         const okrID = req.params.okr_id;
         const objectiveID = req.params.objective_id;
+        const krID = req.params.kr_id;
         const { title:newTitle, description:newDescription, weight:newWeight } = req.body;
 
         // Check authority
@@ -106,42 +121,54 @@ router.put('/:okr_id/objectives/:objective_id', auth, async (req, res) => {
             return res.status(404).send('Objecive with this id does not Exist.');
         }
 
-        // Check okr matching
+        // Check Objective matching with OKR
         if (objective.okrId != okrID) {
             return res.status(404).send('This Objecive does not belong to this OKR.');
         }
 
+        // Get the KR
+        const kr = await getKR(krID);
+        if (!kr) {
+            return res.status(409).send('KR with this id does not Exist.');
+        }
+
+        // Check KR matching with Objective
+        if (kr.objectiveId != objectiveID) {
+            return res.status(404).send('This KR does not belong to this Objective.');
+        }
+
         // update title
-        if (newTitle && newTitle != objective.title) {
-            objective.title = newTitle;
+        if (newTitle && newTitle != kr.title) {
+            kr.title = newTitle;
         }
 
         // update description
-        if (newDescription && newDescription != objective.description) {
-            objective.description = newDescription;
+        if (newDescription && newDescription != kr.description) {
+            kr.description = newDescription;
         }
 
         // update weight
-        if (newWeight && newWeight != objective.weight) {
-            objective.weight = newWeight;
+        if (newWeight && newWeight != kr.weight) {
+            kr.weight = newWeight;
         }
 
-        await objective.save();
+        await kr.save();
 
         // Response
-        res.status(200).send('Objective updated succussfully!');
+        res.status(200).send('KR updated succussfully!');
     } catch (error) {
-        res.status(500).send('Failed to update the Objective.');
+        res.status(500).send('Failed to update the KR.');
         console.log(error);
     }
 });
 
-// Delete Objective
-router.delete('/:okr_id/objectives/:objective_id', auth, async (req, res) => {
+// Delete KR
+router.delete('/:okr_id/objectives/:objective_id/krs/:kr_id', auth, async (req, res) => {
     try {
         const userRole = req.userRole;
         const okrID = req.params.okr_id;
-        const objectiveID = req.params.objective_id
+        const objectiveID = req.params.objective_id;
+        const krID = req.params.kr_id;
 
         // Check authority
         if (userRole != 'Admin' && userRole != 'TeamLeader' && userRole != 'ProductManager') {
@@ -168,18 +195,29 @@ router.delete('/:okr_id/objectives/:objective_id', auth, async (req, res) => {
             return res.status(409).send('Objective with this id does not Exist.');
         }
 
-        // Check okr matching
+        // Check Objective matching with OKR
         if (objective.okrId != okrID) {
             return res.status(404).send('This Objecive does not belong to this OKR.');
         }
 
-        // Delete the Objective
-        await objective.destroy();
+        // Get the KR
+        const kr = await getKR(krID);
+        if (!kr) {
+            return res.status(409).send('KR with this id does not Exist.');
+        }
+
+        // Check KR matching with Objective
+        if (kr.objectiveId != objectiveID) {
+            return res.status(404).send('This KR does not belong to this Objective.');
+        }
+
+        // Delete the KR
+        await kr.destroy();
 
         // Response
-        res.status(200).send('objective deleted succussfully!');
+        res.status(200).send('KR deleted succussfully!');
     } catch (error) {
-        res.status(500).send('Failed to delete the objective.');
+        res.status(500).send('Failed to delete the KR.');
         console.log(error);
     }
 });

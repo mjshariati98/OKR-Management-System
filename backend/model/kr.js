@@ -17,3 +17,20 @@ export const KR = dbClient.define('kr', {
 }, {
     freezeTableName: true
 });
+
+export const createNewKR = async (title, description, weight, objectiveID) => {
+    return await KR.create({
+        title: title,
+        description: description,
+        weight: weight,
+        objectiveId: objectiveID
+    });
+};
+
+export const getKR = async (krID) => {
+    return await KR.findOne({
+        where: {
+            id: krID
+        }
+    });
+};
