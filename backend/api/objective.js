@@ -173,6 +173,12 @@ router.delete('/:okr_id/objectives/:objective_id', auth, async (req, res) => {
             return res.status(404).send('This Objecive does not belong to this OKR.');
         }
 
+        // Delete KR's Objectives
+        const krs = await objective.getKrs();
+        for (const kr of krs) {
+            kr.destroy();
+        }
+
         // Delete the Objective
         await objective.destroy();
 

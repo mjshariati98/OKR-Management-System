@@ -140,6 +140,16 @@ router.delete('/:okr_id', auth, async (req, res) => {
             }
         }
 
+        // Delete OKR's Objectives and KRs
+        const objectives = await okr.getObjectives();
+        for (const objective of objectives) {
+            const krs = await objective.getKrs();
+            for (const kr of krs) {
+                kr.destroy();
+            }
+            objective.destroy();
+        }
+
         // Delete the OKR
         await okr.destroy();
 
