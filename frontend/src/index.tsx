@@ -10,6 +10,9 @@ import App from './App';
 import ToastContainer from './components/ToastContainer';
 import { queryClient } from './global/query-client';
 import { theme } from './global/theme';
+import axios from 'axios';
+
+axios.defaults.baseURL = '/api';
 
 interface WrapperComponent {
     component: ElementType;
