@@ -21,7 +21,7 @@ export default function AdvanceRoute(props: Props) {
 
     return (
         <>
-            <Layout hasPrivateRouteAccess={hasPrivateRouteAccess} />
+            {data && <Layout hasPrivateRouteAccess={hasPrivateRouteAccess} />}
             <Route {...rest} />
         </>
     );
