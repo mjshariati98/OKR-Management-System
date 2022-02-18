@@ -7,15 +7,20 @@ export const Team = dbClient.define('team', {
         allowNull: false,
         primaryKey: true
     },
+    description: {
+        type: Sequelize.STRING,
+        allowNull: true
+    }
 }, {
     freezeTableName: true
 });
 
-export const createNewTeam = async (name, teamLeader, productManager=null) => {
+export const createNewTeam = async (name, description, teamLeader, productManager=null) => {
     return await Team.create({
         name: name,
-        TeamLeader: teamLeader,
-        ProductManager: productManager
+        description: description,
+        teamLeader: teamLeader,
+        productManager: productManager
     });
 }
 
@@ -24,9 +29,13 @@ export const getTeam = async (team_name) => {
         where: {
             name: team_name
         }
-    })
+    });
 }
 
 export const getAllTeams = async () => {
     return await Team.findAll();
+}
+
+export const getTeamMembers = async (team) => {
+    return await team.getUsers( { attributes: { exclude: ['password'] } });
 }

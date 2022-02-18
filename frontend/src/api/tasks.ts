@@ -1,15 +1,28 @@
 import axios, { AxiosError } from 'axios';
-import { queryClient } from 'src/global/query-client';
-import { endPoints } from './enpoints';
+import { BaseUser, UserFull } from './entities';
 
-export function createOrUpdateNote(note: Partial<INote>) {
+export function createOrUpdateUser(user: BaseUser, type: "add" | "update") {
     return axios({
-        method: note.id ? 'put' : 'post',
-        url: '/notes/' + (note.id || 'new'),
-        data: note,
+        method: type === "update" ? 'put' : 'post',
+        url: '/users6/' + type === "add" ? "new" : `${user.username}`,
+        data: user,
     });
 }
 
+export async function getAllUsers() {
+    const res = await axios.request<UserFull[]>({
+        method: "get",
+        url: "/users"
+    });
+    return res.data;
+}
+
+export async function deleteUser(user: UserFull) {
+    await axios.request({
+        method: "delete",
+        url: `/users/${user.username}`
+    })
+}
 
 axios.interceptors.response.use(undefined, (error: AxiosError) => {
     const status = error.response?.status;

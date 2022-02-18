@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { getUser, createNewUser, getAllUsers } from '../model/user.js';
+import { getUser, getUserPassword, createNewUser, getAllUsers } from '../model/user.js';
 import auth from '../middleware/auth.js';
 
 dotenv.config();
@@ -11,8 +11,20 @@ export default router;
 
 // Get all users
 router.get('/', auth, async (req, res) => {
-    const users = await getAllUsers();
-    res.status(200).json(users);
+    try {
+        const userRole = req.userRole;
+
+        // Check authority
+        if (userRole != 'Admin') {
+            return res.status(401).send('You dont have the permission to list users.');
+        }
+
+        const users = await getAllUsers();
+        res.status(200).json(users);
+    } catch (err) {
+        res.status(500).send('Failed to list users.');
+        console.error(error);
+    }
 });
 
 // Create new user
@@ -22,7 +34,6 @@ router.post('/new', auth, async (req, res) => {
         const { username, firstname,lastname, email, phone } = req.body;
 
         // Check authority
-        console.log(userRole);
         if (userRole != 'Admin' && userRole != 'TeamLeader') {
             return res.status(401).send('You dont have the permission to add a new user. Ask your admin or TeamLeader.');   
         }
@@ -57,6 +68,88 @@ router.post('/new', auth, async (req, res) => {
     }
 });
 
+// Delete user
+router.delete('/:username', auth, async (req, res) => {
+    try {
+        const userRole = req.userRole;
+        const username = req.params.username;
+
+        // Check authority
+        if (userRole != 'Admin') {
+            return res.status(401).send('You dont have the permission to delete users. Ask your admin.');
+        }
+
+        // Validate user's input
+        if (!(username)) {
+            res.status(400).send('Username is required');
+        }
+
+        // check if user already exist
+        const user = await getUser(username);
+        if (!user) {
+            return res.status(409).send('User with this username does not exists.');
+        }
+
+        user.destroy();
+
+        // Response
+        res.status(201).json({
+            message: 'User deleted successfully',
+        });
+    } catch (error) {
+        res.status(500).send('Failed to delete user');
+        console.error(error);
+    }
+});
+
+// Edit user information
+router.put('/:username', auth, async (req, res) => {
+    try {
+        const userRole = req.userRole;
+        const username = req.params.username;
+        const { firstname:newFirstName,lastname:newLastName, email:newEmail, phone:newPhone } = req.body;
+
+        // Check authority
+        if (userRole != 'Admin' && req.user != username) {
+            return res.status(401).send('You dont have the permission to edit this user.');
+        }
+
+        // Get the user
+        const user = await getUser(username);
+        if (!user) {
+            return res.status(409).send('User with this username does not Exist.');
+        }
+
+        // update firstname
+        if (newFirstName && newFirstName != user.firstname) {
+            user.firstname = newFirstName;
+        }
+
+        // update lastname
+        if (newLastName && newLastName != user.lastname) {
+            user.lastname = newLastName;
+        }
+
+        // update email
+        if (newEmail && newEmail != user.email) {
+            user.email = newEmail;
+        }
+
+        // update phone
+        if (newPhone && newPhone != user.phone) {
+            user.phone = newPhone;
+        }
+
+        await user.save();
+
+        // Response
+        res.status(200).send('User updated succussfully!');
+    } catch (error) {
+        res.status(500).send('Failed to update the user.');
+        console.log(error);
+    }
+});
+
 // Log in
 router.post('/sign_in', async (req, res) => {
     try {
@@ -69,7 +162,8 @@ router.post('/sign_in', async (req, res) => {
 
         // Validate if user exist in our database
         const user = await getUser(username);
-        if (user && (await bcrypt.compare(password, user.password))) {
+        const userPassword = await getUserPassword(username);
+        if (user && (await bcrypt.compare(password, userPassword))) {
             // Create token
             const token = createToken(username, process.env.EXPIRE_DURATION)
 
@@ -101,8 +195,13 @@ router.post('/sign_out', async (req, res) => {
 
 // Get profile of logged-in user
 router.get('/profile', auth, async (req, res) => {
-    const username = req.user;
-    res.status(200).send({ username });
+    try {
+        const user = await getUser(req.user);
+        res.status(200).send({ user });
+    } catch (err) {
+        res.status(500).send('Failed to get user profile.');
+        console.log(err);
+    }
 });
 
 // helper functions 

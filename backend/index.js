@@ -3,6 +3,10 @@ import http from 'http';
 import { dbClient } from './config/db.js';
 import { User, getUser, createNewUser } from './model/user.js';
 import { Team } from './model/team.js';
+import { Round } from './model/round.js';
+import { OKR } from './model/okr.js';
+import { Objective } from './model/objective.js';
+import { KR } from './model/kr.js';
 import { app } from './app.js';
 
 dotenv.config();
@@ -20,22 +24,42 @@ const connectDB = async () => {
 }
 
 const syncModels = async () => {
-    await User.sync({force: true});
-    await Team.sync({force: true});
+    // User and Team models
+    await User.sync();
+    await Team.sync();
 
-    // Associations
     User.hasOne(Team, {
-        as: 'TeamLeader',
-        foreignKey: 'TeamLeader'
+        as: 'teamLeader',
+        foreignKey: 'teamLeader'
     });
     User.hasOne(Team, {
-        as: 'ProductManager',
-        foreignKey: 'ProductManager'
+        as: 'productManager',
+        foreignKey: 'productManager'
     });
     Team.hasMany(User);
 
-    await User.sync({force: true});
-    await Team.sync({force: true});
+    await User.sync({ alter: true });
+    await Team.sync({ alter: true });
+
+    // Round, OKR, Objective, and KR models
+    await Round.sync();
+    await OKR.sync();
+    await Objective.sync();
+    await KR.sync();
+
+    Team.hasOne(OKR, {
+        as: 'team',
+        foreignKey: 'team'
+    });
+    Round.hasMany(OKR);
+    OKR.hasMany(Objective);
+    Objective.hasMany(KR);
+
+    await Round.sync({ alter: true });
+    await OKR.sync({ alter: true });
+    await Team.sync({ alter: true });
+    await Objective.sync({ alter: true });
+    await KR.sync({ alter: true });
 }
 
 const createAdminUser = async () => {

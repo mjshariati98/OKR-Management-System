@@ -46,13 +46,14 @@ export const getUser = async (username) => {
     return await User.findOne({
         where: {
             username: username
-        }
+        },
+        attributes: { exclude: ['password']}
     });
-}
+};
 
 export const getAllUsers = async () => {
     return await User.findAll({ attributes: { exclude: ['password'] } });
-}
+};
 
 export const getRole = async (username) => {
     const user = await User.findOne({
@@ -63,7 +64,16 @@ export const getRole = async (username) => {
         raw: true
     });
     return user.role
-}
+};
+
+export const getUserPassword = async (username) => {
+    const user = await User.findOne({
+        where: {
+            username: username
+        }
+    });
+    return user.password
+};
 
 export const createNewUser = async (username, firstname,lastname, email, phone, password, role=null) => {
     // Encrypt user's password
@@ -79,4 +89,4 @@ export const createNewUser = async (username, firstname,lastname, email, phone, 
         password: encryptedPassword,
         role: (role || 'Normal')
     });
-}
+};
