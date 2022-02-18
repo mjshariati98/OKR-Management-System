@@ -13,8 +13,16 @@ interface Team {
 interface Round {}
 
 interface OKR {
+    id: number;
+    description: string;
+    okrProgress: number;
+    roundId: number;
+    team: Team['name'];
+    createdAt: string;
+    updatedAt: string;
     objectives: Objective[];
 }
+
 interface Objective {
     id: ID;
     description: string;
