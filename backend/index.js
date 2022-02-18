@@ -25,8 +25,8 @@ const connectDB = async () => {
 
 const syncModels = async () => {
     // User and Team models
-    await User.sync({ force: true });
-    await Team.sync({ force: true });
+    await User.sync();
+    await Team.sync();
 
     User.hasOne(Team, {
         as: 'TeamLeader',
@@ -38,14 +38,14 @@ const syncModels = async () => {
     });
     Team.hasMany(User);
 
-    await User.sync({ force: true });
-    await Team.sync({ force: true });
+    await User.sync({ alter: true });
+    await Team.sync({ alter: true });
 
     // Round, OKR, Objective, and KR models
-    await Round.sync({ force: true });
-    await OKR.sync({ force: true });
-    await Objective.sync({ force: true });
-    await KR.sync({ force: true });
+    await Round.sync();
+    await OKR.sync();
+    await Objective.sync();
+    await KR.sync();
 
     Team.hasOne(OKR, {
         as: 'team',
@@ -55,11 +55,11 @@ const syncModels = async () => {
     OKR.hasMany(Objective);
     Objective.hasMany(KR);
 
-    await Round.sync({ force: true });
-    await OKR.sync({ force: true });
-    await Team.sync({ force: true });
-    await Objective.sync({ force: true });
-    await KR.sync({ force: true });
+    await Round.sync({ alter: true });
+    await OKR.sync({ alter: true });
+    await Team.sync({ alter: true });
+    await Objective.sync({ alter: true });
+    await KR.sync({ alter: true });
 }
 
 const createAdminUser = async () => {
