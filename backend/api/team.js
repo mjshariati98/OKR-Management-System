@@ -196,7 +196,7 @@ router.delete('/:team_name', auth, async (req, res) => {
 });
 
 // Add a user to a team
-router.post('/:team_name', auth, async (req, res) => {
+router.post('/add_member/:team_name', auth, async (req, res) => {
 
 try {
         const userRole = req.userRole;
@@ -248,6 +248,62 @@ try {
         });
     }catch (err){
         res.status(500).send('Failed to assign user to team.');
+        console.log(err);
+    }
+});
+
+// Remove a user from a team
+router.delete('/remove_member/:team_name', auth, async (req, res) => {
+    try {
+        const userRole = req.userRole;
+        const teamName = req.params.team_name;
+        const { username } = req.body;
+
+        // Get the team
+        const team = await getTeam(teamName);
+        if (!team) {
+            return res.status(409).send('Team with this name does not Exist.');
+        }
+
+        // Check authority
+        if (userRole != 'Admin' && userRole != 'TeamLeader') {
+            return res.status(401).send('You dont have the permission to remove users from teams. Ask your admin or team leader.');
+        }
+
+        // Validate input
+        if (!(username)) {
+            res.status(400).send('Username is required');
+        }
+
+        // Check user exist
+        const user = await getUser(username);
+        if (!user) {
+            return res.status(404).send('user with this username does not exist');
+        }
+
+        // Team leaders only can remove normal users to team
+        if (userRole == 'TeamLeader' && user.role != 'Normal') {
+            return res.status(401).send('You dont have the permission to remove non-Noraml users from teams. Ask your admin.');
+        }
+
+        // Team leaders only can remove users from their own team
+        if (userRole == 'TeamLeader') {
+            const tl = await getUser(req.user)
+            const tlTeam = tl.teamName
+            if (tlTeam != teamName){
+                return res.status(401).send('You dont have the permission to remove users from another teams.');
+            }
+        }
+
+        user.teamName = null
+        user.role = 'Normal'
+        user.save()
+
+        res.status(201).json({
+            message: 'User removed from team successfully.'
+        });
+    }catch (err){
+        res.status(500).send('Failed to remove user from team.');
         console.log(err);
     }
 });
