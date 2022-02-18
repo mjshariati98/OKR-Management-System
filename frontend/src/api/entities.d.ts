@@ -26,3 +26,37 @@ export interface TeamFull {
     members?: UserFull[];
     createdAt?: string;
 }
+
+export interface KR {
+    id: string;
+    title: string;
+    description: string;
+    weight: number;
+    done: number;
+    createdAt?: string;
+    objectiveId: string;
+}
+
+export interface BaseObjective {
+    title: string;
+    description: string;
+    weight: number;
+}
+export interface ObjectiveFull extends BaseObjective {
+    id: string;
+    createdAt?: string;
+    okrId: string;
+    krs: KR[];
+    objectiveProgress: number;
+}
+
+export interface BaseOkr {
+    team: string;
+    roundId: string;
+    description?: string;
+}
+export interface OkrFull extends BaseOkr {
+    id: string;
+    createdAt?: string;
+    objectives: Objective[]
+}

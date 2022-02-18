@@ -23,18 +23,13 @@ const App = () => {
 
             <AdvanceRoute exact path="/teams/" component={Teams}/>
 
-            <AdvanceRoute exact path="/company/" component={HomePage} />
-            <AdvanceRoute exact path="/company/round/:roundId" component={OkrPage} />
+            <AdvanceRoute exact path="/okr-page" component={OkrPage}/>
 
+            <AdvanceRoute exact path="/company/" component={HomePage} />
             <AdvanceRoute
                 exact
                 path="/company/:by(round|team)/:id/"
                 component={OkrsByTypePage}
-            />
-            <AdvanceRoute
-                exact
-                path="/company/okr/:okrId"
-                component={OkrPage}
             />
 
             <Redirect to="/company/" />

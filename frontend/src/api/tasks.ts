@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { BaseUser, TeamFull, UserFull } from './entities';
+import { BaseObjective, BaseUser, ObjectiveFull, TeamFull, UserFull } from './entities';
 
 export function createOrUpdateUser(user: BaseUser, type: "add" | "update") {
     let url = "/users/new";
@@ -75,6 +75,33 @@ export async function deleteTeam(team: TeamFull) {
     await axios.request({
         method: "delete",
         url: `/teams/${team.name}`
+    })
+}
+
+export async function getObjectives(okrId: string) {
+    const res = await axios.request<ObjectiveFull[]>({
+        method: "get",
+        url: `/okrs/${okrId}/objectives`,
+    })
+    return res.data;
+}
+
+export async function createOrUpdateObjective(objective: ObjectiveFull, okrId: string, type: "add" | "update") {
+    let url = `/okrs/${okrId}/new_objective`;
+    if (type === "update") {
+        url = `/okrs/${okrId}/objectives/${objective.id}`;
+    }
+    await axios.request({
+        method: type === "update" ? 'put' : 'post',
+        url: url,
+        data: objective,
+    })
+}
+
+export async function deleteObjective(objective: ObjectiveFull, okrId: string) {
+    await axios.request({
+        method: "delete",
+        url: `/okrs/${okrId}/objectives/${objective.id}`
     })
 }
 
