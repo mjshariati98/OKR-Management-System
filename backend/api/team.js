@@ -52,8 +52,9 @@ router.post('/new', auth, async (req, res) => {
         }
 
         // Check product manager exist
+        var pm = null;
         if (productManager) {
-            const pm = await getUser(productManager);
+            pm = await getUser(productManager);
             if (!pm) {
                 return res.status(404).send('ProductManager with this username does not exist');
             }
