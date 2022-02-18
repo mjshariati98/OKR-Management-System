@@ -12,6 +12,12 @@ services:
     networks:
     - common-network
 
+  redis:
+    container_name: redis
+    image: redis:6.2.6-alpine
+    networks:
+    - common-network
+
   backend-1:
     container_name: backend
     image: node:16.12-slim
