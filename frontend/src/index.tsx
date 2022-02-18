@@ -8,6 +8,7 @@ import 'src/assets/font.css';
 import 'src/assets/input.css';
 import { GlobalStyles } from 'twin.macro';
 import App from './App';
+import ToastContainer from './components/ToastContainer';
 import { queryClient } from './global/query-client';
 import { theme } from './global/theme';
 
@@ -42,6 +43,7 @@ const Index = () =>
             <Suspense fallback="loading ...">
                 <App />
             </Suspense>
+            <ToastContainer/>
         </>
     );
 

@@ -10,7 +10,12 @@ interface Team {
     members: UserFull[];
 }
 
-interface Round {}
+interface Round {
+    id: number;
+    name: string;
+    createdAt: string;
+    updatedAt: string;
+}
 
 interface OKRLite {
     id: number;

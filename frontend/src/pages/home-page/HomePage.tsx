@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Button, Grid, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Button, Dialog, Grid, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import * as React from 'react';
 import { useState } from 'react';
@@ -7,7 +7,9 @@ import { BsFillGrid3X3GapFill } from 'react-icons/bs';
 import { FaList } from 'react-icons/fa';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
+import { useToggle } from 'react-use';
 import 'twin.macro';
+import OkrEdit from './OkrEdit';
 import { Progressbar } from './Progressbar';
 
 const teamColumns: GridColDef[] = [
@@ -85,6 +87,8 @@ export default function HomePage() {
         if (newFilterBy.length) setFilterBy(newFilterBy);
     };
 
+    const [okrModal, toggleOkrModal] = useToggle(false);
+
     if (!teams || !rounds) return null;
 
     return (
@@ -127,10 +131,21 @@ export default function HomePage() {
                         </ToggleButton>
                     </ToggleButtonGroup>
                 </Grid>
+                <Grid item className="pl-2 md:pl-3 lg:pl-4">
+                    <Button variant="contained" onClick={toggleOkrModal}>
+                        Add OKR
+                    </Button>
+                    <Dialog open={okrModal} onClose={toggleOkrModal}>
+                        <OkrEdit teams={teams} rounds={rounds} onClose={toggleOkrModal} />
+                    </Dialog>
+                </Grid>
             </Grid>
             {filterBy.forEach((f) => (
                 <div className="w-full h-96 mt-8" style={{ height: 400, width: '100%' }}>
-                    <DataGrid rows={f === 'team' ? teams! : rounds!} columns={f === 'team' ? teamColumns! : roundColumns!} />
+                    <DataGrid
+                        rows={f === 'team' ? teams! : rounds!}
+                        columns={f === 'team' ? teamColumns! : roundColumns!}
+                    />
                 </div>
             ))}
         </div>
