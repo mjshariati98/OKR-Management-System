@@ -19,14 +19,36 @@ services:
     - common-network
 
   backend-1:
-    container_name: backend
-    image: node:16.12-slim
+    container_name: backend-1
     build: ./backend
     command: npm run start
-    ports: 
-    - "8000:8000"
     networks:
     - common-network
+  backend-2:
+    container_name: backend-2
+    build: ./backend
+    command: npm run start
+    networks:
+    - common-network
+
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    ports:
+    - "3000:3000"
+    networks:
+    - common-network
+
+  nginx:
+    container_name: nginx
+    image: nginx:1.17.10
+    ports:
+    - "80:80"
+    volumes:
+    - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+    - common-network
+
 
 networks:
   common-network:

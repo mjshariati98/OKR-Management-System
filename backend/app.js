@@ -16,17 +16,17 @@ app.use(express.json());
 app.use(cookieParser());
 
 // middlewares
-app.use('/users/new', throttle);
-app.use('/users/sign_in', throttle);
-app.use('/teams', throttle);
-app.use('/rounds', throttle);
-app.use('/okrs', throttle);
+app.use('/api/users/new', throttle);
+app.use('/api/users/sign_in', throttle);
+app.use('/api/teams', throttle);
+app.use('/api/rounds', throttle);
+app.use('/api/okrs', throttle);
 
 // endpoints
-app.use('/users', user);
-app.use('/teams', team);
-app.use('/rounds',round);
-app.use('/okrs', okr);
-app.use('/okrs', objective);
-app.use('/okrs', kr);
+app.use('/api/users', user);
+app.use('/api/teams', team);
+app.use('/api/rounds',round);
+app.use('/api/okrs', okr);
+app.use('/api/okrs', objective);
+app.use('/api/okrs', kr);
 
