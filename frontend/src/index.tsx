@@ -4,7 +4,6 @@ import { ElementType, ReactElement, Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import { QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
-import 'src/assets/font.css';
 import 'src/assets/input.css';
 import { GlobalStyles } from 'twin.macro';
 import App from './App';
@@ -35,7 +34,7 @@ const Index = () =>
                 styles={{
                     body: {
                         fontFamily:
-                            '"Shabnam FD", "Roboto", "Helvetica", "Arial", sans-serif !important',
+                            '"Roboto", "Helvetica", "Arial", sans-serif !important',
                     },
                 }}
             />

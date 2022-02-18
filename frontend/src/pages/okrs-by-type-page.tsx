@@ -43,13 +43,15 @@ export default function OkrsByTypePage() {
 
     if (!okrs) return null;
 
+    const indexBy = byType === 'round' ? 'team' : 'roundId';
+
     return (
         <div className="h-[70vh]">
             <DataGrid autoHeight rows={okrs} columns={okrColumns} />
             <ResponsiveBar
                 data={okrs as any}
                 keys={['okrProgress']}
-                indexBy="roundId"
+                indexBy={indexBy}
                 margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
                 valueScale={{ type: 'linear' }}
                 indexScale={{ type: 'band', round: true }}
@@ -60,7 +62,7 @@ export default function OkrsByTypePage() {
                     tickSize: 5,
                     tickPadding: 5,
                     tickRotation: 0,
-                    legend: 'roundId',
+                    legend: indexBy,
                     legendPosition: 'middle',
                     legendOffset: 32,
                 }}
