@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { BaseUser, UserFull } from 'src/api/entities';
 import { Role } from 'src/api/enums';
-import { deleteUser, getAllUsers as getUsers } from 'src/api/tasks';
+import { deleteUser, getUsers } from 'src/api/tasks';
 import 'twin.macro';
 import UserEdit from './UserEdit';
 import UserView from './UserView';
@@ -50,7 +50,11 @@ export default function Users() {
                     Add
                 </Button>
                 <div tw="px-4 overflow-y-auto w-full">
-                    {users.map((u) => (
+                    {users.sort((a, b) => {
+                        const aDate = new Date(a.createdAt!);
+                        const bDate = new Date(b.createdAt!);
+                        return aDate.getTime() - bDate.getTime();
+                    }).map((u) => (
                         <UserView user={u} onEdit={() => onEditClick('update', u)} onDelete={() => onDeleteClick(u)} />
                     ))}
                 </div>
