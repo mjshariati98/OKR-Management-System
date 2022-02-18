@@ -37,8 +37,8 @@ export default function Teams() {
     };
 
     return (
-        <Box tw="mx-auto h-screen" sx={{ maxWidth: '70%' }}>
-            <div tw="p-4 flex flex-col items-center h-screen w-full">
+        <Box tw="mx-auto h-[90vh]" sx={{ maxWidth: "70%" }}>
+            <div tw="p-4 flex flex-col items-center h-[90vh] w-full">
                 <Button
                     variant="contained"
                     tw="normal-case mb-3 w-36 mr-auto ml-10"

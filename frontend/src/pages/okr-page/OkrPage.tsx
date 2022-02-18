@@ -84,7 +84,7 @@ export default function OkrPage(props: Props) {
     const progress = Math.floor(okr.okrProgress ?? 0);
 
     return (
-        <div tw="h-screen w-full flex justify-center items-center">
+        <div tw="h-[90vh] w-full flex justify-center items-center">
             <Box tw="flex" sx={{ height: '80%', width: '80%' }}>
                 <div>
                     {team && (

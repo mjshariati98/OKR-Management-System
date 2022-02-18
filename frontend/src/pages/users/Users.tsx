@@ -40,8 +40,8 @@ export default function Users() {
     };
 
     return (
-        <div tw="mx-auto h-screen w-4/5">
-            <div tw="p-4 flex flex-col items-center h-screen w-full">
+        <div className="mx-auto h-[90vh] w-4/5">
+            <div tw="p-4 flex flex-col items-center h-[90vh] w-full">
                 <Button
                     variant="contained"
                     tw="normal-case mb-3 w-36 mr-auto ml-4"

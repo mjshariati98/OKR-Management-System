@@ -8,7 +8,7 @@ const Layout = (props: {hasPrivateRouteAccess: boolean}) => {
     const hasPrivateRouteAccess = props.hasPrivateRouteAccess;
 
     return (
-        <div className="bg-white py-2 w-full border-b">
+        <div className="shadow-lg bg-gray-700 py-2 w-full border-b">
             <Grid
                 className="container"
                 container
@@ -16,13 +16,9 @@ const Layout = (props: {hasPrivateRouteAccess: boolean}) => {
                 justifyContent="space-between"
             >
                 <Grid item xs>
-                    {hasPrivateRouteAccess && <Link to="/users">Users</Link>}
-                    {hasPrivateRouteAccess && <Link to="/teams">Teams</Link>}
-                </Grid>
-                <Grid item xs="auto">
-                    <IconButton className="text-gray-800 mr-4" aria-label="settings">
-                        <MdSettings size={20} />
-                    </IconButton>
+                    {hasPrivateRouteAccess && <Link className="mx-2 text-white" to="/">Home</Link>}
+                    {hasPrivateRouteAccess && <Link className="mx-2 text-white" to="/users">Users</Link>}
+                    {hasPrivateRouteAccess && <Link className="mx-2 text-white" to="/teams">Teams</Link>}
                 </Grid>
                 <Grid item xs="auto">
                     <Button
