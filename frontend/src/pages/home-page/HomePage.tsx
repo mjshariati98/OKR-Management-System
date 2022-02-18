@@ -1,6 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { Button, Grid, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import * as React from 'react';
+import { useState } from 'react';
 import { BsFillGrid3X3GapFill } from 'react-icons/bs';
 import { FaList } from 'react-icons/fa';
 import { MdOutlineLogout } from 'react-icons/md';
@@ -10,11 +12,11 @@ import 'twin.macro';
 import { Progressbar } from './Progressbar';
 
 const okrColumns: GridColDef[] = [
-    { field: 'id', headerName: 'شناسه', width: 100 },
-    { field: 'round', headerName: 'دوره', width: 300, valueGetter: (p) => p.row.round.title },
+    { field: 'id', headerName: 'ID', width: 100 },
+    { field: 'round', headerName: 'Round', width: 300, valueGetter: (p) => p.row.round.title },
     {
         field: 'progressPercent',
-        headerName: 'درصد پیشرفت',
+        headerName: 'Progrss Percent',
         width: 300,
         renderCell: (param) => {
             const value = param.row?.progressPercent;
@@ -30,28 +32,28 @@ const okrColumns: GridColDef[] = [
                 component={Link}
                 to={`${window.location.pathname}/round/${param.row.round.id}`.replace('//', '/')}
             >
-                مشاهده
+                View
             </Button>
         ),
     },
 ];
 
 const createTargetColumns = (targetType: Target['type']): GridColDef[] => [
-    { field: 'id', headerName: 'شناسه', width: 100 },
+    { field: 'id', headerName: 'ID', width: 100 },
     {
         field: 'name',
         headerName: (
             {
-                user: 'نام',
-                team: 'تیم',
-                company: 'شرکت',
+                user: 'Name',
+                team: 'Team',
+                company: 'Company',
             } as const
         )[targetType],
         width: 300,
     },
     {
         field: 'latestOkrProgressPercent',
-        headerName: 'درصد پیشرفت',
+        headerName: 'Progress Percent',
         width: 300,
         renderCell: (param) => {
             const okrs = param.row.okrs;
@@ -70,7 +72,7 @@ const createTargetColumns = (targetType: Target['type']): GridColDef[] => [
                     param.row.id
                 }/`}
             >
-                مشاهده
+                View
             </Button>
         ),
     },
@@ -78,20 +80,24 @@ const createTargetColumns = (targetType: Target['type']): GridColDef[] => [
 
 export default function HomePage() {
     const params = useParams<{ childTargetId?: ID }>();
+    const [filterBy, setFilterBy] = useState(['team']);
+    const [viewMode, setViewMode] = useState('list');
 
     const { company, childTarget, target } = getTarget(params);
 
     const isCompanyLevel = !childTarget;
     const okrs = target.okrs ?? [];
 
+    const handleViewModeChange = (event: React.MouseEvent<HTMLElement>, newViewMode: string) => {
+        setViewMode(newViewMode);
+    };
+
+    const handleFilterByChange = (event: React.MouseEvent<HTMLElement>, newFilterBy: string[]) => {
+        if (newFilterBy.length) setFilterBy(newFilterBy);
+    };
+
     return (
-        <Grid
-            container
-            height="100vh"
-            direction="column"
-            alignItems="center"
-            className="max-w-screen-xl px-8 pt-8 mx-auto items-start"
-        >
+        <div className="max-w-screen-xl px-8 pt-8 mx-auto items-start">
             <Grid container alignItems="center" justifyContent="space-between">
                 <Grid item xs>
                     <h1 className="font-bold text-sky-600 text-3xl">OKR Management System</h1>
@@ -100,8 +106,9 @@ export default function HomePage() {
                     <ToggleButtonGroup
                         color="primary"
                         size="small"
-                        value={'list'}
-                        // onChange={handleChange}
+                        value={viewMode}
+                        exclusive
+                        onChange={handleViewModeChange}
                     >
                         <ToggleButton value="list">
                             <FaList size={15} />
@@ -116,27 +123,36 @@ export default function HomePage() {
                     <ToggleButtonGroup
                         color="primary"
                         size="small"
-                        value={'team'}
-                        // onChange={handleChange}
+                        value={filterBy}
+                        onChange={handleFilterByChange}
                     >
                         <ToggleButton value="team">Team</ToggleButton>
                         <ToggleButton value="round">Round</ToggleButton>
                     </ToggleButtonGroup>
                 </Grid>
                 <Grid item xs="auto" className="pl-4">
-                    <Button className="btn btn-large signout-btn" variant="outlined" disableElevation endIcon={<MdOutlineLogout size={18} />}>
+                    <Button
+                        className="btn btn-large signout-btn"
+                        variant="outlined"
+                        size="small"
+                        disableElevation
+                        endIcon={<MdOutlineLogout size={18} />}
+                    >
                         <span className="mt-[2.5px]">Sign Out</span>
                     </Button>
                 </Grid>
             </Grid>
-            <Grid item xs={4} mt={3} container>
-                <DataGrid rows={okrs} columns={okrColumns} />
-            </Grid>
-            <Grid item xs={4} mt={3} container>
+            <div className="w-full h-96 mt-8" style={{ height: 400, width: '100%' }}>
+                <DataGrid
+                    rows={okrs}
+                    columns={okrColumns}
+                />
+            </div>
+            {/* <Grid item xs={4} mt={3} container>
                 {isCompanyLevel && (
                     <DataGrid rows={company.teams} columns={createTargetColumns('team')} />
                 )}
-            </Grid>
-        </Grid>
+            </Grid> */}
+        </div>
     );
 }
