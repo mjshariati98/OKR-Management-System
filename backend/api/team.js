@@ -113,13 +113,15 @@ router.put('/:team_name', auth, async (req, res) => {
                 return res.status(404).send('TeamLeader with this username does not exist');
             }
 
-            oldTL.role = 'Normal';
-            newTL.role = 'TeamLeader';
-            newTL.teamName = teamName
-            team.teamLeader = newTeamLeader;
-            
-            await oldTL.save();
-            await newTL.save();
+            if (newTL.username != oldTL.username) {
+                oldTL.role = 'Normal';
+                newTL.role = 'TeamLeader';
+                newTL.teamName = teamName
+                team.teamLeader = newTeamLeader;
+
+                await oldTL.save();
+                await newTL.save();
+            }
         }
 
         // Update PM
@@ -130,13 +132,15 @@ router.put('/:team_name', auth, async (req, res) => {
                 return res.status(404).send('ProductManager with this username does not exist');
             }
 
-            oldPM.role = 'Normal';
-            newPM.role = 'ProductManager';
-            newPM.teamName = teamName
-            team.productManager = newProductManager;
-            
-            await oldPM.save();
-            await newPM.save();
+            if (newPM.username != oldPM.username) {
+                oldPM.role = 'Normal';
+                newPM.role = 'ProductManager';
+                newPM.teamName = teamName
+                team.productManager = newProductManager;
+
+                await oldPM.save();
+                await newPM.save();
+            }
         }
 
         await team.save();
