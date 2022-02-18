@@ -48,9 +48,11 @@ router.post('/new', auth, async (req, res) => {
         }
 
         // Check product manager exist
-        const pm = await getUser(productManager);
-        if (!pm) {
-            return res.status(404).send('ProductManager with this username does not exist');
+        if (productManager) {
+            const pm = await getUser(productManager);
+            if (!pm) {
+                return res.status(404).send('ProductManager with this username does not exist');
+            }
         }
         
         // Create the team
@@ -60,9 +62,11 @@ router.post('/new', auth, async (req, res) => {
         tl.teamName = name
         await tl.save()
 
-        pm.role = 'ProductManager'
-        pm.teamName = name
-        await pm.save()
+        if (productManager) {
+            pm.role = 'ProductManager'
+            pm.teamName = name
+            await pm.save()
+        }
 
         res.status(201).json({
             message: 'Team Created successfully'
