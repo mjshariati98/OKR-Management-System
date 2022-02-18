@@ -1,9 +1,12 @@
 import { Button, Grid, IconButton } from '@mui/material';
 import React from 'react';
 import { MdOutlineLogout, MdSettings } from 'react-icons/md';
+import { Link } from 'react-router-dom';
 import { logout } from '../api/tasks';
 
-const Layout = () => {
+const Layout = (props: {hasPrivateRouteAccess: boolean}) => {
+    const hasPrivateRouteAccess = props.hasPrivateRouteAccess;
+
     return (
         <div className="bg-white py-2 w-full border-b">
             <Grid
@@ -13,7 +16,8 @@ const Layout = () => {
                 justifyContent="space-between"
             >
                 <Grid item xs>
-
+                    {hasPrivateRouteAccess && <Link to="/users">Users</Link>}
+                    {hasPrivateRouteAccess && <Link to="/teams">Teams</Link>}
                 </Grid>
                 <Grid item xs="auto">
                     <IconButton className="text-gray-800 mr-4" aria-label="settings">

@@ -1,3 +1,4 @@
+import { css, injectGlobal } from '@emotion/css';
 import { Button } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ResponsiveBar } from '@nivo/bar';
@@ -7,30 +8,33 @@ import { Progressbar } from './home-page/Progressbar';
 
 const okrColumns: GridColDef[] = [
     { field: 'id', headerName: 'id', width: 100 },
-    { field: 'round', headerName: 'round', width: 300, valueGetter: (p) => p.row.roundName },
+    { field: 'description', headerName: 'description', width: 200 },
+    { field: 'team', headerName: 'team', width: 200 },
+    { field: 'roundId', headerName: 'roundId', width: 200 },
+    // { field: 'objectives.length', headerName: 'objectives length', width: 100, valueGetter: (x: any) => x.objectives?.length },
     {
-        field: 'progressPercent',
-        headerName: 'progressPercent',
-        width: 300,
+        field: 'okrProgress',
+        headerName: 'okrProgress',
+        width: 200,
         renderCell: (param) => {
-            const value = param.row?.progressPercent;
-            return value ? <Progressbar value={value} /> : '---';
+            const value = param.row?.okrProgress;
+            return value != null ? <Progressbar value={value} /> : '---';
         },
     },
     {
-        field: 'action',
-        headerName: '',
+        field: 'actions',
+        headerName: 'actions',
         sortable: false,
         renderCell: (param) => (
-            <Button
-                component={Link}
-                to={`/company/okr/${param.row.id}`.replace('//', '/')}
-            >
+            <Button component={Link} to={`/company/okr/${param.row.id}`.replace('//', '/')}>
                 view
             </Button>
         ),
     },
 ];
+
+injectGlobal`
+`
 
 export default function OkrsByTypePage() {
     const { by: byType, id } = useParams<{ by: 'team' | 'round'; id: ID }>();
@@ -40,8 +44,8 @@ export default function OkrsByTypePage() {
     if (!okrs) return null;
 
     return (
-        <div className="h-screen">
-            <DataGrid rows={okrs} columns={okrColumns} />
+        <div className="h-[70vh]">
+            <DataGrid autoHeight rows={okrs} columns={okrColumns} />
             <ResponsiveBar
                 data={okrs as any}
                 keys={['okrProgress']}
