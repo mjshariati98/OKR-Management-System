@@ -6,7 +6,6 @@ import { FaList } from 'react-icons/fa';
 import { MdOutlineLogout } from 'react-icons/md';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
-import { teams as mockTeams } from 'src/api/teams.mock';
 import 'twin.macro';
 import { Progressbar } from './Progressbar';
 
@@ -71,7 +70,7 @@ const roundColumns: GridColDef[] = [
 ];
 
 export default function HomePage() {
-    const { data: teams } = useQuery<Team[]>('/teams/', () => mockTeams);
+    const { data: teams } = useQuery<Team[]>('/teams/');
     const { data: rounds } = useQuery<Round[]>('/rounds/');
 
     if (!teams || !rounds) return null;

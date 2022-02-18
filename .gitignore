@@ -140,3 +140,6 @@ dist
 
 # DB database
 database/db_data/*
+
+# scripts
+*.sh
