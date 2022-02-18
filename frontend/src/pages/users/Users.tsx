@@ -13,7 +13,7 @@ export default function Users() {
     const [modalType, setModalType] = useState<'update' | 'add' | null>(null);
     const [editUser, setEditUser] = useState<BaseUser | null>(null);
     const [users, setUsers] = useState<UserFull[]>([]);
-    
+
     useEffect(() => {
         refetch();
     }, []);

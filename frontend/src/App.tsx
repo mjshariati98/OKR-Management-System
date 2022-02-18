@@ -6,6 +6,7 @@ import Authentication from './pages/authentication';
 import HomePage from './pages/home-page';
 import OkrPage from './pages/okr-page';
 import Teams from './pages/teams';
+import OkrsByTypePage from './pages/okrs-by-type-page';
 import Users from './pages/users';
 
 const App = () => {
@@ -27,12 +28,12 @@ const App = () => {
 
             <AdvanceRoute
                 exact
-                path="/company/:childTargetType(user|team)/:childTargetId/"
-                component={HomePage}
+                path="/company/:by(round|team)/:id/"
+                component={OkrsByTypePage}
             />
             <AdvanceRoute
                 exact
-                path="/company/:childTargetType(user|team)/:childTargetId/round/:roundId"
+                path="/company/okr/:okrId"
                 component={OkrPage}
             />
 

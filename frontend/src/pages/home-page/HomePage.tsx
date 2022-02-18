@@ -6,18 +6,18 @@ import { FaList } from 'react-icons/fa';
 import { MdOutlineLogout } from 'react-icons/md';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
+import { teams as mockTeams } from 'src/api/teams.mock';
 import 'twin.macro';
 import { Progressbar } from './Progressbar';
 
-const okrColumns: GridColDef[] = [
-    { field: 'id', headerName: 'شناسه', width: 100 },
-    { field: 'round', headerName: 'دوره', width: 300, valueGetter: (p) => p.row.round.title },
+const teamColumns: GridColDef[] = [
+    { field: 'name', headerName: 'name', width: 100 },
     {
-        field: 'progressPercent',
-        headerName: 'درصد پیشرفت',
+        field: 'done',
+        headerName: 'progressPercent',
         width: 300,
         renderCell: (param) => {
-            const value = param.row?.progressPercent;
+            const value = param.row?.done;
             return value ? <Progressbar value={value} /> : '---';
         },
     },
@@ -28,7 +28,7 @@ const okrColumns: GridColDef[] = [
         renderCell: (param) => (
             <Button
                 component={Link}
-                to={`${window.location.pathname}/round/${param.row.round.id}`.replace('//', '/')}
+                to={`${window.location.pathname}/team/${param.row.name}`.replace('//', '/')}
             >
                 مشاهده
             </Button>
@@ -36,22 +36,16 @@ const okrColumns: GridColDef[] = [
     },
 ];
 
-const createTargetColumns = (targetType: Target['type']): GridColDef[] => [
-    { field: 'id', headerName: 'شناسه', width: 100 },
+const roundColumns: GridColDef[] = [
+    { field: 'id', headerName: 'id', width: 100 },
     {
         field: 'name',
-        headerName: (
-            {
-                user: 'نام',
-                team: 'تیم',
-                company: 'شرکت',
-            } as const
-        )[targetType],
+        headerName: 'name',
         width: 300,
     },
     {
         field: 'latestOkrProgressPercent',
-        headerName: 'درصد پیشرفت',
+        headerName: 'ProgressPercent',
         width: 300,
         renderCell: (param) => {
             const okrs = param.row.okrs;
@@ -77,8 +71,10 @@ const createTargetColumns = (targetType: Target['type']): GridColDef[] => [
 ];
 
 export default function HomePage() {
-    const { data: teams } = useQuery<Team[]>('/teams/');
+    const { data: teams } = useQuery<Team[]>('/teams/', () => mockTeams);
     const { data: rounds } = useQuery<Round[]>('/rounds/');
+
+    if (!teams || !rounds) return null;
 
     return (
         <Grid
@@ -131,10 +127,10 @@ export default function HomePage() {
                 </Grid>
             </Grid>
             <Grid item xs={4} mt={3} container>
-                <DataGrid rows={teams!} columns={okrColumns} />
+                <DataGrid getRowId={team => team.name} rows={teams} columns={teamColumns} />
             </Grid>
             <Grid item xs={4} mt={3} container>
-                <DataGrid rows={rounds!} columns={createTargetColumns('team')} />
+                <DataGrid rows={rounds} columns={roundColumns} />
             </Grid>
         </Grid>
     );
