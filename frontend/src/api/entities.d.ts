@@ -13,3 +13,11 @@ export interface UserFull extends BaseUser {
     createdAt?: string;
     teamName?: string;
 }
+export interface TeamFull {
+    name: string;
+    teamLeader: BaseUser["username"];
+    description?: string;
+    productManager?: BaseUser["username"];
+    members?: UserFull[];
+    createdAt?: string;
+}

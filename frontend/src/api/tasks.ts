@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { BaseUser, UserFull } from './entities';
+import { BaseUser, TeamFull, UserFull } from './entities';
 
 export function createOrUpdateUser(user: BaseUser, type: "add" | "update") {
     let url = "/users/new";
@@ -34,6 +34,49 @@ axios.interceptors.response.use(undefined, (error: AxiosError) => {
         // 
     }
 });
+
+export async function getTeams() {
+    const res = await axios.request<TeamFull[]>({
+        method: "get",
+        url: "/teams",
+    })
+    return res.data;
+}
+
+export async function createOrUpdateTeam(team: TeamFull, type: "add" | "update") {
+    let url = "/teams/new";
+    if (type === "update") {
+        url = `/teams/${team.name}`
+    }
+    await axios.request({
+        method: type === "update" ? 'put' : 'post',
+        url: url,
+        data: team,
+    })
+}
+
+export async function addMemberToTeam(teamname: string, username: string) {
+    await axios.request({
+        method: "post",
+        url: `/teams/add_member/${teamname}`,
+        data: { username }
+    })
+}
+
+export async function removeMemberFromTeam(teamname: string, username: string) {
+    await axios.request({
+        method: "delete",
+        url: `/teams/remove_member/${teamname}`,
+        data : { username },
+    })
+}
+
+export async function deleteTeam(team: TeamFull) {
+    await axios.request({
+        method: "delete",
+        url: `/teams/${team.name}`
+    })
+}
 
 export async function logout() {
     await axios.post('/users/sign_out');

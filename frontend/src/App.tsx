@@ -5,6 +5,7 @@ import 'twin.macro';
 import Authentication from './pages/authentication';
 import HomePage from './pages/home-page';
 import OkrPage from './pages/okr-page';
+import Teams from './pages/teams';
 import Users from './pages/users';
 
 const App = () => {
@@ -18,6 +19,8 @@ const App = () => {
             />
 
             <AdvanceRoute exact path="/users/" component={Users} />
+
+            <AdvanceRoute exact path="/teams/" component={Teams}/>
 
             <AdvanceRoute exact path="/company/" component={HomePage} />
             <AdvanceRoute exact path="/company/round/:roundId" component={OkrPage} />
