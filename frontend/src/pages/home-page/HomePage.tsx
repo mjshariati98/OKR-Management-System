@@ -10,27 +10,32 @@ import { Link } from 'react-router-dom';
 import { useToggle } from 'react-use';
 import 'twin.macro';
 import OkrEdit from './OkrEdit';
-import { Progressbar } from './Progressbar';
 
 const teamColumns: GridColDef[] = [
     { field: 'name', headerName: 'name', width: 100 },
     {
-        field: 'done',
-        headerName: 'progressPercent',
-        width: 300,
-        renderCell: (param) => {
-            const value = param.row?.done;
-            return value ? <Progressbar value={value} /> : '---';
-        },
+        field: 'productManager',
+        headerName: 'productManager',
+        width: 200,
     },
     {
-        field: 'action',
-        headerName: '',
+        field: 'teamLeader',
+        headerName: 'teamLeader',
+        width: 200,
+    },
+    {
+        field: 'description',
+        headerName: 'description',
+        width: 200,
+    },
+    {
+        field: 'actions',
+        headerName: 'actions',
         sortable: false,
         renderCell: (param) => (
             <Button
                 component={Link}
-                to={`${window.location.pathname}/team/${param.row.name}`.replace('//', '/')}
+                to={`/okrs/team/${param.row.name}`.replace('//', '/')}
             >
                 View
             </Button>
@@ -46,25 +51,13 @@ const roundColumns: GridColDef[] = [
         width: 300,
     },
     {
-        field: 'latestOkrProgressPercent',
-        headerName: 'Progress Percent',
-        width: 300,
-        renderCell: (param) => {
-            const okrs = param.row.okrs;
-            const percentage = okrs?.[0]?.progressPercent as number | undefined;
-            return okrs?.length ? <Progressbar value={percentage ?? 0} /> : '---';
-        },
-    },
-    {
-        field: 'action',
-        headerName: '',
+        field: 'actions',
+        headerName: 'actions',
         sortable: false,
         renderCell: (param) => (
             <Button
                 component={Link}
-                to={`${window.location.pathname.match(/\/company/)}/${param.row.type}/${
-                    param.row.id
-                }/`}
+                to={`/okrs/round/${param.row.id}/`}
             >
                 View
             </Button>
@@ -140,9 +133,10 @@ export default function HomePage() {
                     </Dialog>
                 </Grid>
             </Grid>
-            {filterBy.forEach((f) => (
-                <div className="w-full h-96 mt-8" style={{ height: 400, width: '100%' }}>
+            {filterBy.map((f) => (
+                <div key={f} className="w-full h-96 mt-8" style={{ height: 400, width: '100%' }}>
                     <DataGrid
+                        getRowId={(row) => row.id || row.name}
                         rows={f === 'team' ? teams! : rounds!}
                         columns={f === 'team' ? teamColumns! : roundColumns!}
                     />

@@ -1,53 +1,54 @@
 import { LineWeight, TextSnippet, Title } from '@mui/icons-material';
 import { Button, FormControl, InputAdornment, InputLabel, OutlinedInput } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { BaseObjective, ObjectiveFull } from 'src/api/entities';
-import { createOrUpdateObjective } from 'src/api/tasks';
+import { BaseKR, BaseObjective, KRFull, ObjectiveFull } from 'src/api/entities';
+import { createOrUpdateKR, createOrUpdateObjective } from 'src/api/tasks';
 
 interface Props {
-    initObjective: Partial<BaseObjective>;
+    initKR: Partial<BaseKR>;
     type: 'update' | 'add';
     okrId: string;
+    objectiveId: string;
     onClose(): void;
 }
 
-export function ObjectiveEdit(props: Props) {
-    const [objective, setObjective] = useState<Partial<BaseObjective>>(props.initObjective);
+export function KREdit(props: Props) {
+    const [kr, setKR] = useState<Partial<BaseObjective>>(props.initKR);
     const [titleError, setTitleError] = useState(false);
     const [weightError, setWeightError] = useState(false);
 
     useEffect(() => {
-        if (objective.title && objective.title.length > 0) {
+        if (kr.title && kr.title.length > 0) {
             setTitleError(false);
         }
-        if (objective.weight) {
+        if (kr.weight) {
             setWeightError(false);
         }
-    }, [objective.title, objective.weight]);
+    }, [kr.title, kr.weight]);
 
     const onChange =
-        (field: keyof BaseObjective) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        (field: keyof BaseKR) => (event: React.ChangeEvent<HTMLInputElement>) => {
             const value = event.target.value;
             if (field === 'weight' && isNaN(Number(value))) {
                 return;
             }
-            setObjective((prevObjective) => {
-                const newObjective = { ...prevObjective };
-                newObjective[field] = field === 'weight' ? Number(value) : (value as any);
-                return newObjective;
+            setKR((prevKR) => {
+                const newKR = { ...prevKR };
+                newKR[field] = field === 'weight' ? Number(value) : (value as any);
+                return newKR;
             });
         };
 
     const onSaveClick = async () => {
-        if (!objective.title || objective.title === '') {
+        if (!kr.title || kr.title === '') {
             setTitleError(true);
             return;
         }
-        if (!objective.weight || objective.weight.toString().length === 0) {
+        if (!kr.weight || kr.weight.toString().length === 0) {
             setWeightError(true);
             return;
         }
-        await createOrUpdateObjective(objective as ObjectiveFull, props.okrId, props.type);
+        await createOrUpdateKR(kr as KRFull, props.objectiveId, props.okrId, props.type);
         props.onClose();
     };
 
@@ -63,7 +64,7 @@ export function ObjectiveEdit(props: Props) {
                 <InputLabel>Title</InputLabel>
                 <OutlinedInput
                     disabled={props.type === 'update'}
-                    value={objective.title ?? ''}
+                    value={kr.title ?? ''}
                     onChange={onChange('title')}
                     endAdornment={
                         <InputAdornment position="end">
@@ -82,7 +83,7 @@ export function ObjectiveEdit(props: Props) {
             >
                 <InputLabel>Weight</InputLabel>
                 <OutlinedInput
-                    value={objective.weight ?? ''}
+                    value={kr.weight ?? ''}
                     onChange={onChange('weight')}
                     endAdornment={
                         <InputAdornment position="end">
@@ -95,7 +96,7 @@ export function ObjectiveEdit(props: Props) {
             <FormControl size="small" className="grow ml-2" variant="outlined">
                 <InputLabel>Description</InputLabel>
                 <OutlinedInput
-                    value={objective.description ?? ''}
+                    value={kr.description ?? ''}
                     onChange={onChange('description')}
                     endAdornment={
                         <InputAdornment position="end">

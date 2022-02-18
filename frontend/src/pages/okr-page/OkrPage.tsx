@@ -2,9 +2,13 @@
 import { Button } from '@mui/material';
 import { Box } from '@mui/system';
 import { useEffect, useState } from 'react';
-import { ObjectiveFull, OkrFull } from 'src/api/entities';
-import { deleteObjective, getObjectives } from 'src/api/tasks';
+import { useQuery } from 'react-query';
+import { useParams } from 'react-router';
+import { ObjectiveFull, OkrFull, TeamFull } from 'src/api/entities';
+import { deleteObjective, getObjectives, getTeams } from 'src/api/tasks';
 import 'twin.macro';
+import { Progressbar } from '../home-page/Progressbar';
+import TeamView from '../teams/TeamView';
 import { ObjectiveEdit } from './ObjectiveEdit';
 import { ObjectiveView } from './ObjectiveView';
 
@@ -17,12 +21,26 @@ const okr: OkrFull = {
     description: 'null',
     createdAt: '2022-02-18T15:06:05.156Z',
     team: 'AsqarDooni',
+    okrProgress: 20,
     roundId: '2',
     objectives: [],
 };
 
 export default function OkrPage(props: Props) {
-    // const { okr } = props;
+    const [team, setTeam] = useState<TeamFull | null>(null);
+    const { okrId } = useParams<{ okrId: ID }>();
+    const { data: okr, refetch: refetchOkr } = useQuery<OKR>('/okrs/' + okrId);
+
+    useEffect(() => {
+        (async() => {
+            if (!okr) {
+                return;
+            }
+            const res = await getTeams();
+            setTeam(res.find((t) => t.name === okr.team) ?? null);
+        })()
+    }, [okr])
+
     const [addingObjective, setAddingObjective] = useState(false);
     const [objectives, setObjectives] = useState<ObjectiveFull[]>([]);
     const [objectiveModes, setObjectiveModes] = useState<{ [o: string]: boolean }>({});
@@ -38,8 +56,9 @@ export default function OkrPage(props: Props) {
     }, []);
 
     const refetch = async () => {
-        const result = await getObjectives(okr.id);
+        const result = await getObjectives(okrId);
         setObjectives(result);
+        refetchOkr();
     };
 
     const sumWeights = objectives.reduce((acc, curr) => acc + curr.weight, 0);
@@ -56,19 +75,30 @@ export default function OkrPage(props: Props) {
     };
 
     const onDeleteClick = async (objective: ObjectiveFull) => {
-        await deleteObjective(objective, okr.id);
+        await deleteObjective(objective, okrId);
         refetch();
     }
 
     if (!okr) return null;
 
+    const progress = Math.floor(okr.okrProgress ?? 0);
+
     return (
         <div tw="h-screen w-full flex justify-center items-center">
             <Box tw="flex" sx={{ height: '80%', width: '80%' }}>
-                <Box tw="shadow-xl w-96"></Box>
+                <div>
+                    {team && (
+                        <TeamView team={team} members={team.members ?? []} noEditable />
+                    )}
+                </div>
                 <div className="px-5 w-full">
                     <div className="flex w-full">
-                        <h1 className="font-bold text-sky-600 text-3xl">Objectives</h1>
+                        <h1 className="font-bold text-sky-600 text-3xl">{`${okr.description} Objectives`}</h1>
+                        <div className="flex items-center text-gray-400 ml-10 w-64">
+                            <div className="mr-2">progress:</div>
+                            <Progressbar value={okr.okrProgress}/>
+                            <div className="ml-2 w-16">{`${progress}%`}</div>
+                        </div>
                         <Button
                             className="ml-auto normal-case"
                             variant="contained"
@@ -80,7 +110,7 @@ export default function OkrPage(props: Props) {
                     {addingObjective && (
                         <ObjectiveEdit
                             initObjective={{}}
-                            okrId={okr.id}
+                            okrId={okrId}
                             type="add"
                             onClose={onClose}
                         />
@@ -97,7 +127,7 @@ export default function OkrPage(props: Props) {
                                     initObjective={o}
                                     type="update"
                                     onClose={() => onObjectiveModeChange(o, false)}
-                                    okrId={okr.id}
+                                    okrId={okrId}
                                 />
                             ) : (
                                 <ObjectiveView
@@ -105,6 +135,7 @@ export default function OkrPage(props: Props) {
                                     onEdit={() => onObjectiveModeChange(o, true)}
                                     sumWeights={sumWeights}
                                     objective={o}
+                                    onProgressChange={refetch}
                                 />
                             )
                         )}

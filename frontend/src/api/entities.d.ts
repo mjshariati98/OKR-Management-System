@@ -27,11 +27,14 @@ export interface TeamFull {
     createdAt?: string;
 }
 
-export interface KR {
-    id: string;
+export interface BaseKR {
     title: string;
-    description: string;
     weight: number;
+    description?: string;
+}
+
+export interface KRFull extends BaseKR {
+    id: string;
     done: number;
     createdAt?: string;
     objectiveId: string;
@@ -58,5 +61,6 @@ export interface BaseOkr {
 export interface OkrFull extends BaseOkr {
     id: string;
     createdAt?: string;
+    okrProgress: number;
     objectives: Objective[]
 }

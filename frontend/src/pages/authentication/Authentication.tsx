@@ -23,22 +23,22 @@ export type { Props as AuthProps };
 
 enum Tabs {
     SignIn,
-    SignUp,
+    // SignUp,
 }
 
 export default function Authentication(props: Props) {
-    const [tab, setTab] = useState(Tabs.SignIn);
     const [error, setError] = useState<string>();
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = Object.fromEntries(new FormData(event.currentTarget).entries());
         // data.username = data.email;
-        axios
-            .post(['/users/sign_in', '/users/sign_up'][tab], data)
-            .then(() => {
+        axios.post('/users/sign_in', data).then(
+            () => {
                 queryClient.invalidateQueries(endPoints.profile);
-            }, (e) => setError(e.response.data));
+            },
+            (e) => setError(e.response.data)
+        );
     };
 
     return (
@@ -48,7 +48,7 @@ export default function Authentication(props: Props) {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    {['Sign in', 'Sign up'][tab]}
+                    Sign in
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                     <TextField
@@ -59,16 +59,6 @@ export default function Authentication(props: Props) {
                         name="username"
                         autoComplete="username"
                     />
-                    {tab === Tabs.SignUp && (
-                        <TextField
-                            sx={{ m: '0.3em' }}
-                            required
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                        />
-                    )}
                     <TextField
                         sx={{ m: '0.3em' }}
                         required
@@ -80,20 +70,8 @@ export default function Authentication(props: Props) {
                     />
                     {error && <FormHelperText error>{error}</FormHelperText>}
                     <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                        {['Sign In', 'Sign Up'][tab]}
+                        Sign In
                     </Button>
-                    <Button
-                        {...[
-                            {
-                                onClick: () => setTab(Tabs.SignUp),
-                                children: "Don't have an account? Sign Up",
-                            },
-                            {
-                                onClick: () => setTab(Tabs.SignIn),
-                                children: 'Already have an account? Sign in',
-                            },
-                        ][tab]}
-                    />
                 </Box>
             </div>
         </Container>

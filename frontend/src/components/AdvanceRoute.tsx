@@ -2,6 +2,8 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 import { endPoints } from 'src/api/enpoints';
+import { UserFull } from 'src/api/entities';
+import { Role } from 'src/api/enums';
 import Layout from './Layout';
 
 interface Props extends RouteProps {
@@ -10,14 +12,16 @@ interface Props extends RouteProps {
 
 export default function AdvanceRoute(props: Props) {
     const { mode = 'authorized', ...rest } = props;
-    const { data } = useQuery(endPoints.profile);
+    const { data, error } = useQuery<UserFull>(endPoints.profile);
 
-    if (!data && mode === 'authorized') return <Redirect to="/authentication" />;
-    if (data && mode === 'unauthorized') return <Redirect to="/company/" />;
+    if (error && mode === 'authorized') return <Redirect to="/authentication" />;
+    if (data && mode === 'unauthorized') return <Redirect to="/" />;
+
+    const hasPrivateRouteAccess = !!data && (data.role === Role.TL || data.role === Role.Admin)
 
     return (
         <>
-            <Layout />
+            {data && <Layout hasPrivateRouteAccess={hasPrivateRouteAccess} />}
             <Route {...rest} />
         </>
     );
