@@ -4,6 +4,7 @@
   "private": true,
   "proxy": "http://localhost:8000",
   "scripts": {
+    "tailwindcss:build": "npx tailwindcss -i ./src/assets/input.css -o ./src/assets/output.css --watch",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
