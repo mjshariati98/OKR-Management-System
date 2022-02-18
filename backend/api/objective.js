@@ -67,10 +67,11 @@ router.post('/:okr_id/new_objective', auth, async (req, res) => {
         }
 
         // Create the objective
-        await createNewObjective(title, description, weight, okrID);
+        const objective = await createNewObjective(title, description, weight, okrID);
 
         res.status(201).json({
-            message: 'Objective added to OKR successfully'
+            message: 'Objective added to OKR successfully',
+            id: objective.id
         });
     }catch (err){
         res.status(500).send('Failed to add objective.');

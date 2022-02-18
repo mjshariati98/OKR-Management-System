@@ -78,10 +78,11 @@ router.post('/new', auth, async (req, res) => {
         }
 
         // Create the OKR
-        await createNewOKR(roundId, teamName, description);
+        const okr = await createNewOKR(roundId, teamName, description);
 
         res.status(201).json({
-            message: 'OKR Created successfully'
+            message: 'OKR Created successfully',
+            'id': okr.id
         });
     }catch (err){
         res.status(500).send('Failed to create the OKR.');

@@ -47,7 +47,7 @@ router.post('/new', auth, async (req, res) => {
             message: 'Round Created successfully'
         });
     }catch (err){
-        res.status(500).send('Failed to create the team.');
+        res.status(500).send('Failed to create the round.');
         console.log(err);
     }
 });

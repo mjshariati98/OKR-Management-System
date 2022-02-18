@@ -76,10 +76,11 @@ router.post('/:okr_id/objectives/:objective_id/new_kr', auth, async (req, res) =
         }
 
         // Create the KR
-        await createNewKR(title, description, weight, objectiveID);
+        const kr = await createNewKR(title, description, weight, objectiveID);
 
         res.status(201).json({
-            message: 'KR added to Objective successfully'
+            message: 'KR added to Objective successfully',
+            'id': kr.id
         });
     }catch (err){
         res.status(500).send('Failed to add KR.');
