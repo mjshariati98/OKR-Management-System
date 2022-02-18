@@ -25,14 +25,14 @@ const App = () => {
 
             <AdvanceRoute exact path="/okr-page" component={OkrPage}/>
 
-            <AdvanceRoute exact path="/company/" component={HomePage} />
+            <AdvanceRoute exact path="/" component={HomePage} />
             <AdvanceRoute
                 exact
-                path="/company/:by(round|team)/:id/"
+                path="/okrs/:by(round|team)/:id/"
                 component={OkrsByTypePage}
             />
 
-            <Redirect to="/company/" />
+            <Redirect to="/" />
         </Switch>
     );
 };

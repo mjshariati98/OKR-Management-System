@@ -35,7 +35,7 @@ const teamColumns: GridColDef[] = [
         renderCell: (param) => (
             <Button
                 component={Link}
-                to={`${window.location.pathname}/team/${param.row.name}`.replace('//', '/')}
+                to={`/okrs/team/${param.row.name}`.replace('//', '/')}
             >
                 View
             </Button>
@@ -57,7 +57,7 @@ const roundColumns: GridColDef[] = [
         renderCell: (param) => (
             <Button
                 component={Link}
-                to={`/company/round/${param.row.id}/`}
+                to={`/okrs/round/${param.row.id}/`}
             >
                 View
             </Button>

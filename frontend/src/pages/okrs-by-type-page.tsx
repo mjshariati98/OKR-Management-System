@@ -26,7 +26,7 @@ const okrColumns: GridColDef[] = [
         headerName: 'actions',
         sortable: false,
         renderCell: (param) => (
-            <Button component={Link} to={`/company/okr/${param.row.id}`.replace('//', '/')}>
+            <Button component={Link} to={`/okr/${param.row.id}`}>
                 view
             </Button>
         ),
